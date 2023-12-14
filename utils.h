@@ -4,5 +4,6 @@
 #include <stdio.h>
 
 int FileIsNull(FILE *input);
+void line (char *symbols, int length);
 
 #endif
