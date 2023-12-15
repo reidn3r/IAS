@@ -26,10 +26,10 @@ int main(){
 
     char *BINARY[] = {"00001010", "00001001", "00100001", "00000001", "00000010", "00000011", "00000100", "00001101", "00001110", "00001111", "00010000", "00000101", "00000111", "00000110", "00001000", "00001011", "00001100", "00010100", "00010101", "00010010", "00010011"};
     
-    char buffer[MAX_TEXT_LENGTH];
-    char *argument, *instruction;
+    char buffer[MAX_TEXT_LENGTH], instruction[MAX_TEXT_LENGTH];
+    char *argument;
     int lineCounter = 1;
-    int data;
+    int data, X = -1;
 
     if(FileIsNull(input)) printf("Arquivo de instrucoes nao foi aberto");
 
@@ -47,14 +47,17 @@ int main(){
         /* 
             - Identifica instruções
         */
-        line("-=", 18);
+        line("-", 18);
         printf("-=-=Linha %d=-=-\n", lineCounter);
 
+        // Pré-processando
         removerNewLine(buffer);
         strcpy(instruction, buffer);
-        removerX(instruction);
+        X = removerX(instruction);
+
+        // Identificando operador
         binary_opcode = opcode_index(instruction, OP_ARRAY, BINARY);
-        printf("%s: %s\n", instruction, binary_opcode);
+        printf("%s:\t%d:\t%s\n", instruction, X, binary_opcode);
         lineCounter++;
     }
 

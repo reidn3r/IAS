@@ -1,5 +1,6 @@
 #include "utils.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -7,17 +8,21 @@ int FileIsNull(FILE *input){
     return (input == NULL) ? 1 : 0;
 }
 
-void removerX(char *str) { // Remove a parte variável da string da instrução
+int removerX(char *str) { // Remove e retorna a parte variável da string da instrução
     int lidos = 0; // Número de caracteres lidos
     int escritos = 0; // Número de caracteres escritos
+    char X[4] = "-1";
 
     while (str[lidos] != '\0' && !isdigit((unsigned char)str[lidos])) {
         // Copia caracteres não numéricos para a posição de escrita
         str[escritos++] = str[lidos++];
     }
 
+    if (str[lidos] != '\0') X[0] = '0'; X[1] = '\0';
+
     while (str[lidos] != '\0' && isdigit((unsigned char)str[lidos])) {
         // Pula caracteres numéricos
+        X[lidos-escritos] = str[lidos];
         lidos++;
     }
 
@@ -28,16 +33,22 @@ void removerX(char *str) { // Remove a parte variável da string da instrução
 
     // Adiciona o caractere nulo ao final da string
     str[escritos] = '\0';
+
+    return atoi(X);
 }
 
 void removerNewLine(char *str) { // Remove o \n do final de string
-    size_t comprimento = strlen(str);
+    int comprimento = strlen(str);
 
     // Verifica se a string tem pelo menos um caractere e se o último é '\n'
     if (comprimento > 0 && str[comprimento - 1] == '\n') {
         // Substitui o '\n' pelo caractere nulo '\0'
         str[comprimento - 1] = '\0';
     }
+}
+
+unsigned int binarioParaInteiro(const char *strBinario) {
+    return strtoul(strBinario, NULL, 2);
 }
 
 void line (char *symbols, int length) {

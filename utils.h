@@ -4,8 +4,9 @@
 #include <stdio.h>
 
 int FileIsNull(FILE *input);
-void removerX(char *str);
+int removerX(char *str);
 void removerNewLine(char *str);
+unsigned int binarioParaInteiro(const char *strBinario)
 void line (char *symbols, int length);
 
 #endif
