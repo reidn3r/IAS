@@ -26,10 +26,10 @@ int main(){
 
     char *BINARY[] = {"00001010", "00001001", "00100001", "00000001", "00000010", "00000011", "00000100", "00001101", "00001110", "00001111", "00010000", "00000101", "00000111", "00000110", "00001000", "00001011", "00001100", "00010100", "00010101", "00010010", "00010011"};
     
-    char buffer[MAX_TEXT_LENGTH], instruction[MAX_TEXT_LENGTH];
+    char buffer[MAX_TEXT_LENGTH], instructionText[MAX_TEXT_LENGTH];
     char *argument;
-    int lineCounter = 1;
-    int data, endereco = -1;
+    int lineCounter = 0;
+    int data, address = -1;
 
     if(FileIsNull(input)) printf("Arquivo de instrucoes nao foi aberto");
 
@@ -43,35 +43,65 @@ int main(){
     }
     
     char *binary_opcode;
-    long long int word;
+
+    int instructionInt;
+    int instructionsInt[256];
+
     while(fgets(buffer, MAX_TEXT_LENGTH, input)){
-        word = 0;
+        instructionInt = 0;
 
         line("-", 30);
-        printf("-=-=-=-=-=Linha %d=-=-=-=-=-\n", lineCounter);
+        printf("-=-=-=-=-=Linha %d=-=-=-=-=-\n", lineCounter+1);
 
         // Remove \n
         removerNewLine(buffer);
         printf("buffer:\t\t%s\n", buffer);
 
         // Separa intrucao de endereco de memoria
-        strcpy(instruction, buffer);
-        endereco = removerX(instruction);
-        binary_opcode = opcode_index(instruction, OP_ARRAY, BINARY);
-        printf("instrucao:\t%s\n", instruction);
-        printf("endereco:\t%d\n", endereco);
+        strcpy(instructionText, buffer);
+        address = removerX(instructionText);
+        binary_opcode = opcode_index(instructionText, OP_ARRAY, BINARY);
+        printf("opcode[txt]:\t%s\n", instructionText);
+        printf("endereco:\t%d\n", address);
 
-        // Adiciona opcode binario na word
-        word = word | strToBin(binary_opcode);
-        printf("opcode:\t\t");
-        printBinary(word);
+        // Adiciona opcode binario na instrucao
+        instructionInt = instructionInt | strToBin(binary_opcode);
+        printf("opcode[bin]:\t");
+        printBinary(instructionInt);
 
-        word = word << 8;
-        word = word | endereco;
-        printf("comando1:\t");
-        printBinary(word);
+        // Adiciona endereco binario na instrucao
+        instructionInt = instructionInt << 12;
+        instructionInt = instructionInt | address;
+        printf("instrucao:\t");
+        printBinary(instructionInt);
+
+        // Salva em vetor de instrucoes
+        instructionsInt[lineCounter] = instructionInt;
 
         lineCounter++;
+    }
+
+    // Enumera as instrucoes compiladas e constroi as 'words' do IAS juntando duas instrucoes
+    line("~", 30);
+    printf("\tInstrucoes\n");
+    long long words[256];
+    for (int i = 0; i < lineCounter; i++) {
+        printf("Instrucao %d: ", i+1);
+        printBinary(instructionsInt[i]);
+
+        if (i % 2 == 0) {
+            words[i/2] = instructionsInt[i];
+        } else {
+            words[i/2] = (words[i/2] << 20) | instructionsInt[i];
+        }
+    }
+
+    line("~", 30);
+    printf("\tPalavras\n");
+    for (int i = 0; i < lineCounter/2; i++) {
+        line("-", 20);
+        printf("Palavra %d: %lld\n", i+1, words[i]);
+        printBinary(words[i]);
     }
 
     fclose(input);

@@ -62,13 +62,13 @@ void line (char *symbols, int length) {
     printf("\n");
 }
 
-void printBinary(int n) {
+void printBinary(long long n) {
     if (n == 0) {
         printf("0");
         return;
     }
 
-    int bits[1024];
+    int bits[64];
     int i = 0;
 
     while (n > 0) {
