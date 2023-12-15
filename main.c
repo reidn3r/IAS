@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "utils.h"
+
 #define MAX_TEXT_LENGTH 40
 #define DATA_SIZE 500
 #define PROGRAM_ADDR_START 500
