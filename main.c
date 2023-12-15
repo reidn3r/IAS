@@ -29,7 +29,7 @@ int main(){
     char buffer[MAX_TEXT_LENGTH], instruction[MAX_TEXT_LENGTH];
     char *argument;
     int lineCounter = 1;
-    int data, X = -1;
+    int data, endereco = -1;
 
     if(FileIsNull(input)) printf("Arquivo de instrucoes nao foi aberto");
 
@@ -43,21 +43,34 @@ int main(){
     }
     
     char *binary_opcode;
+    long long int word;
     while(fgets(buffer, MAX_TEXT_LENGTH, input)){
-        /* 
-            - Identifica instruções
-        */
-        line("-", 18);
-        printf("-=-=Linha %d=-=-\n", lineCounter);
+        word = 0;
 
-        // Pré-processando
+        line("-", 30);
+        printf("-=-=-=-=-=Linha %d=-=-=-=-=-\n", lineCounter);
+
+        // Remove \n
         removerNewLine(buffer);
-        strcpy(instruction, buffer);
-        X = removerX(instruction);
+        printf("buffer:\t\t%s\n", buffer);
 
-        // Identificando operador
+        // Separa intrucao de endereco de memoria
+        strcpy(instruction, buffer);
+        endereco = removerX(instruction);
         binary_opcode = opcode_index(instruction, OP_ARRAY, BINARY);
-        printf("%s:\t%d:\t%s\n", instruction, X, binary_opcode);
+        printf("instrucao:\t%s\n", instruction);
+        printf("endereco:\t%d\n", endereco);
+
+        // Adiciona opcode binario na word
+        word = word | strToBin(binary_opcode);
+        printf("opcode:\t\t");
+        printBinary(word);
+
+        word = word << 8;
+        word = word | endereco;
+        printf("comando1:\t");
+        printBinary(word);
+
         lineCounter++;
     }
 

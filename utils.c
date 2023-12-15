@@ -47,7 +47,7 @@ void removerNewLine(char *str) { // Remove o \n do final de string
     }
 }
 
-unsigned int binarioParaInteiro(const char *strBinario) {
+unsigned int strToBin(const char *strBinario) {
     return strtoul(strBinario, NULL, 2);
 }
 
@@ -58,6 +58,26 @@ void line (char *symbols, int length) {
 
     for (int i = 0; i < length/x; i++) {
         printf("%s", symbols);
+    }
+    printf("\n");
+}
+
+void printBinary(int n) {
+    if (n == 0) {
+        printf("0");
+        return;
+    }
+
+    int bits[1024];
+    int i = 0;
+
+    while (n > 0) {
+        bits[i++] = n % 2;
+        n /= 2;
+    }
+
+    for (int j = i - 1; j >= 0; j--) {
+        printf("%d", bits[j]);
     }
     printf("\n");
 }
