@@ -7,7 +7,7 @@ int FileIsNull(FILE *input){
     return (input == NULL) ? 1 : 0;
 }
 
-void removerNumeros(char *str) {
+void removerX(char *str) { // Remove a parte variável da string da instrução
     int lidos = 0; // Número de caracteres lidos
     int escritos = 0; // Número de caracteres escritos
 
@@ -28,6 +28,16 @@ void removerNumeros(char *str) {
 
     // Adiciona o caractere nulo ao final da string
     str[escritos] = '\0';
+}
+
+void removerNewLine(char *str) { // Remove o \n do final de string
+    size_t comprimento = strlen(str);
+
+    // Verifica se a string tem pelo menos um caractere e se o último é '\n'
+    if (comprimento > 0 && str[comprimento - 1] == '\n') {
+        // Substitui o '\n' pelo caractere nulo '\0'
+        str[comprimento - 1] = '\0';
+    }
 }
 
 void line (char *symbols, int length) {
