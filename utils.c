@@ -37,15 +37,16 @@ int removerX(char *str) { // Remove e retorna a parte variável da string da ins
     return atoi(X);
 }
 
-void removerNewLine(char *str) { // Remove o \n do final de string
+void removerNewLine(char *str) {
     int comprimento = strlen(str);
 
     // Verifica se a string tem pelo menos um caractere e se o último é '\n'
-    if (comprimento > 0 && str[comprimento - 1] == '\n') {
-        // Substitui o '\n' pelo caractere nulo '\0'
+    if (comprimento > 0 && (str[comprimento - 1] == '\n' || str[comprimento - 1] == '\r')) {
+        // Substitui o '\n' ou '\r' pelo caractere nulo '\0'
         str[comprimento - 1] = '\0';
     }
 }
+
 
 unsigned int strToBin(const char *strBinario) {
     return strtoul(strBinario, NULL, 2);

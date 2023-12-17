@@ -66,6 +66,8 @@ int main(){
 
         // Adiciona opcode binario na instrucao
         instructionInt = instructionInt | strToBin(binary_opcode);
+        printf("binary_opcode: %s\n", binary_opcode);
+        printf("strToBin: %d\n", strToBin(binary_opcode));
         printf("opcode[bin]:\t");
         printBinary(instructionInt);
 
@@ -110,8 +112,11 @@ int main(){
 }
 
 char* opcode_index(char *op, char *op_list[], char *binary_opcode[]){
+    printf("-- comparando...\n");
     for(int i=0; i<21; i++){
-        if(strcmp(op_list[i], op) == 0){
+        printf("- %s, %s\n", op_list[i], op);
+        if(strncmp(op_list[i], op, strlen(op_list[i])) == 0){
+            printf("-- achei!\n");
             return binary_opcode[i];
         }
     }
