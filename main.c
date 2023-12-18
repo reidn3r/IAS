@@ -15,11 +15,12 @@ typedef struct IAS {
 } IAS;
 
 char *opcode_index(char *op, char *op_list[], char *binary_opcode[]);
+void write_output(IAS ias, FILE *output, long long words[], int size);
 
 int main(){
     
     FILE *input = fopen("input.txt", "r");
-    FILE *output = fopen("output.txt", "w+b");
+    FILE *output = fopen("output.txt", "w");
     IAS ias;
         
     char *OP_ARRAY[] = {"LOAD MQ", "LOAD MQ,M()", "STOR M()", "LOAD M()", "LOAD -M()", "LOAD |M()|", "LOAD -|M()|", "JUMP M(,0:19)", "JUMP M(,20:39)", "JUMP+ M(,0:19)","JUMP+ M(,20:39)", "ADD M()", "ADD |M()|", "SUB M()", "SUB |M()|", "MUL M()", "DIV M()", "LSH", "RSH", "STOR M(,8:19)", "STOR M(,28:39)"};
@@ -106,6 +107,11 @@ int main(){
         printBinary(words[i]);
     }
 
+    int size = sizeof(words)/sizeof(long long);
+    printf("SIZE: %d\n", size);
+    write_output(ias, output, words, lineCounter/2);
+    // write_output(ias, output, words, size);
+
     fclose(input);
     fclose(output);
     return 0;
@@ -121,4 +127,14 @@ char* opcode_index(char *op, char *op_list[], char *binary_opcode[]){
         }
     }
     return "";
+}
+
+
+void write_output(IAS ias, FILE *output, long long words[], int size){
+    for(int j=0; j<DATA_SIZE; j++){
+        fprintf(output, "%lld\n", ias.main_memo[j]);
+    }
+    for(int i=0; i<size; i++){
+        fprintf(output, "%lld\n", words[i]);
+    }
 }
