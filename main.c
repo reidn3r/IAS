@@ -17,11 +17,20 @@ typedef struct IAS {
 char *opcode_index(char *op, char *op_list[], char *binary_opcode[]);
 void write_output(IAS ias, FILE *output, long long words[], int size);
 
-int main(){
-    
-    FILE *input = fopen("input.txt", "r");
-    FILE *output = fopen("output.txt", "w");
+int main (int argc, char *argv[]){
+    FILE *input;
+    FILE *output;
     IAS ias;
+    
+    if (argc == 5 && strcmp(argv[1], "-p") == 0 && strcmp(argv[3], "-m") == 0) {
+        input = fopen(argv[2], "r");
+        output = fopen(argv[4], "w");
+    } else {
+        fprintf(stderr, "Argumentos incorretos!\n");
+        fprintf(stderr, "Modo de uso:\n");
+        fprintf(stderr, "$ %s -p arquivo_de_entrada -m arquivo_de_saida\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
         
     char *OP_ARRAY[] = {"LOAD MQ", "LOAD MQ,M()", "STOR M()", "LOAD M()", "LOAD -M()", "LOAD |M()|", "LOAD -|M()|", "JUMP M(,0:19)", "JUMP M(,20:39)", "JUMP+ M(,0:19)","JUMP+ M(,20:39)", "ADD M()", "ADD |M()|", "SUB M()", "SUB |M()|", "MUL M()", "DIV M()", "LSH", "RSH", "STOR M(,8:19)", "STOR M(,28:39)"};
 

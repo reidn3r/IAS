@@ -2,3 +2,4 @@
 *.exe
 output.txt
 *.json
+test.c
