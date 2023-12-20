@@ -22,6 +22,7 @@ int main (int argc, char *argv[]){
     FILE *output;
     IAS ias;
     
+    // Verifica se o programa foi chamado corretamente
     if (argc == 5 && strcmp(argv[1], "-p") == 0 && strcmp(argv[3], "-m") == 0) {
         input = fopen(argv[2], "r");
         output = fopen(argv[4], "w");
