@@ -1,0 +1,16 @@
+doitgen
+Kernel of Multiresolution ADaptive NumErical Scientific Simulation (MADNESS) \( { }^{2} \). The kernel is taken from the modified version used by You et al. [7].
+It takes the following as inputs,
+
+- A: \( R \times Q \times S \) array
+- x: \( P \times S \) array
+
+and gives the following as output:
+
+- Aout: \( R \times Q \times P \) array
+
+\[
+\mathrm{A}(r, q, p)=\sum_{s=0}^{S-1} \mathrm{~A}(r, q, s) \mathrm{x}(p, s)
+\]
+
+Note that the output Aout is to be stored in place of the input array A in the original code. Although it is not mentioned anywhere, the computation does not make sense if \( P \neq S \).
