@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <ctype.h>
+#include <stdint.h>
+#include <inttypes.h>
+
 #include "utils.h"
 
 #define MAX_TEXT_LENGTH 40
@@ -8,11 +13,23 @@
 #define PROGRAM_ADDR_START 500
 
 typedef struct IAS {
-    long AC;
-    long MQ;
-    long long int main_memo[1024*4];
-    /* Add. outros registradores */
+    int64_t MBR;    // Memory buffer register
+    int64_t MAR;    // Memory address register
+
+    int64_t IR;     // Instruction register
+    int64_t IBR;    // Instruction buffer register
+
+    int64_t PC;     // Program counter
+    int64_t AC;     // Accumulator
+    int64_t MQ;     // Multiplier quotient 
+
+    int64_t memory[4096]; // Memória tem tamanho de 4096 palavras
+    int memorylimit; // Quanto da memória realmente está sendo usada
 } IAS;
+
+char *OP_ARRAY[] = {"LOAD MQ", "LOAD MQ,M()", "STOR M()", "LOAD M()", "LOAD -M()", "LOAD |M()|", "LOAD -|M()|", "JUMP M(,0:19)", "JUMP M(,20:39)", "JUMP+ M(,0:19)","JUMP+ M(,20:39)", "ADD M()", "ADD |M()|", "SUB M()", "SUB |M()|", "MUL M()", "DIV M()", "LSH", "RSH", "STOR M(,8:19)", "STOR M(,28:39)"};
+
+char *BINARY[] = {"00001010", "00001001", "00100001", "00000001", "00000010", "00000011", "00000100", "00001101", "00001110", "00001111", "00010000", "00000101", "00000111", "00000110", "00001000", "00001011", "00001100", "00010100", "00010101", "00010010", "00010011"};
 
 char *opcode_index(char *op, char *op_list[], char *binary_opcode[]);
 void write_output(IAS ias, FILE *output, long long words[], int size);
@@ -32,29 +49,49 @@ int main (int argc, char *argv[]){
         fprintf(stderr, "$ %s -p arquivo_de_entrada -m arquivo_de_saida\n", argv[0]);
         exit(EXIT_FAILURE);
     }
-        
-    char *OP_ARRAY[] = {"LOAD MQ", "LOAD MQ,M()", "STOR M()", "LOAD M()", "LOAD -M()", "LOAD |M()|", "LOAD -|M()|", "JUMP M(,0:19)", "JUMP M(,20:39)", "JUMP+ M(,0:19)","JUMP+ M(,20:39)", "ADD M()", "ADD |M()|", "SUB M()", "SUB |M()|", "MUL M()", "DIV M()", "LSH", "RSH", "STOR M(,8:19)", "STOR M(,28:39)"};
-
-    char *BINARY[] = {"00001010", "00001001", "00100001", "00000001", "00000010", "00000011", "00000100", "00001101", "00001110", "00001111", "00010000", "00000101", "00000111", "00000110", "00001000", "00001011", "00001100", "00010100", "00010101", "00010010", "00010011"};
-    
-    char buffer[MAX_TEXT_LENGTH], instructionText[MAX_TEXT_LENGTH];
-    char *argument;
-    int lineCounter = 0;
-    int data, address = -1;
 
     if(FileIsNull(input)) printf("Arquivo de instrucoes nao foi aberto");
 
-    for(int i=0; i<DATA_SIZE; i++){
-        /* 
-            - Armazena dados em memória
-        */
+    /*
+    * Lê quantos ciclos cada instrução leva
+    */
+
+        // TODO
+
+    /*
+    * Armazena dados em memória
+    */
+
+    int data;
+    char buffer[MAX_TEXT_LENGTH];
+
+    int memorylimit = 0;
+    fgets (buffer, MAX_TEXT_LENGTH, input);
+
+    while (isdigit(*buffer)) { // Lê até encontrar algo que não é número
+        ias.memory[memorylimit] = atoi(buffer);
+        memorylimit++;
+        fgets (buffer, MAX_TEXT_LENGTH, input);
+    }
+
+    /*
+    for(i = 0; i < DATA_SIZE; i++) {
+
         fgets(buffer, MAX_TEXT_LENGTH, input);
         data = atoi(buffer);
-        ias.main_memo[i] = data;
-    }
+        ias.memory[i] = data;
+    }*/
     
-    char *binary_opcode;
+    /*
+    * Armazena instruções em memória
+    */
 
+    char instructionText[MAX_TEXT_LENGTH];
+    char *argument;
+    int lineCounter = 0;
+    int address = -1;
+
+    char *binary_opcode;
     int instructionInt;
     int instructionsInt[256];
 
@@ -122,6 +159,16 @@ int main (int argc, char *argv[]){
     write_output(ias, output, words, lineCounter/2);
     // write_output(ias, output, words, size);
 
+    /* * * * * * * * * * * * * * * * *
+    *         HORA DE SIMULAR!       *
+     * * * * * * * * * * * * * * * * */
+
+    // Mostra o que está na memória
+    for (int i = 0; i < memorylimit; i++) {
+        printf(" - %ld - \n", ias.memory[i]);
+    }
+
+    // Finaliza
     fclose(input);
     fclose(output);
     return 0;
@@ -142,9 +189,9 @@ char* opcode_index(char *op, char *op_list[], char *binary_opcode[]){
 
 void write_output(IAS ias, FILE *output, long long words[], int size){
     for(int j=0; j<DATA_SIZE; j++){
-        fprintf(output, "%lld\n", ias.main_memo[j]);
+        fprintf(output, "%" PRId64 "\n", ias.memory[j]);
     }
     for(int i=0; i<size; i++){
-        fprintf(output, "%lld\n", words[i]);
+        // fprintf(output, "%lld\n", words[i]);
     }
 }
