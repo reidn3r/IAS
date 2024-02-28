@@ -27,9 +27,19 @@ typedef struct IAS {
     int memorylimit; // Quanto da memória realmente está sendo usada
 } IAS;
 
+typedef struct PIPELINE {
+    int64_t BM;
+    int64_t DC;
+    int64_t BO;
+    int64_t EX;
+    int64_t ER;
+} PIPELINE;
+
 char *OP_ARRAY[] = {"LOAD MQ", "LOAD MQ,M()", "STOR M()", "LOAD M()", "LOAD -M()", "LOAD |M()|", "LOAD -|M()|", "JUMP M(,0:19)", "JUMP M(,20:39)", "JUMP+ M(,0:19)","JUMP+ M(,20:39)", "ADD M()", "ADD |M()|", "SUB M()", "SUB |M()|", "MUL M()", "DIV M()", "LSH", "RSH", "STOR M(,8:19)", "STOR M(,28:39)"};
 
 char *BINARY[] = {"00001010", "00001001", "00100001", "00000001", "00000010", "00000011", "00000100", "00001101", "00001110", "00001111", "00010000", "00000101", "00000111", "00000110", "00001000", "00001011", "00001100", "00010100", "00010101", "00010010", "00010011"};
+
+int CYCLES[21]; // Será preenchido depois 
 
 char *opcode_index(char *op, char *op_list[], char *binary_opcode[]);
 void write_output(IAS ias, FILE *output, long long words[], int size);
@@ -40,13 +50,13 @@ int main (int argc, char *argv[]){
     IAS ias;
     
     // Verifica se o programa foi chamado corretamente
-    if (argc == 5 && strcmp(argv[1], "-p") == 0 && strcmp(argv[3], "-m") == 0) {
+    if (argc == 5 && strcmp(argv[1], "-p") == 0 && strcmp(argv[3], "-i") == 0) {
         input = fopen(argv[2], "r");
-        output = fopen(argv[4], "w");
+        output = fopen(strcat(argv[2],".out"), "w");
     } else {
         fprintf(stderr, "Argumentos incorretos!\n");
         fprintf(stderr, "Modo de uso:\n");
-        fprintf(stderr, "$ %s -p arquivo_de_entrada -m arquivo_de_saida\n", argv[0]);
+        fprintf(stderr, "$ %s -p arquivo_de_entrada -i endereco_inicial_de_PC\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
@@ -57,6 +67,7 @@ int main (int argc, char *argv[]){
     */
 
         // TODO
+        // fgets lê até onde começam os dados
 
     /*
     * Armazena dados em memória
@@ -73,14 +84,6 @@ int main (int argc, char *argv[]){
         memorylimit++;
         fgets (buffer, MAX_TEXT_LENGTH, input);
     }
-
-    /*
-    for(i = 0; i < DATA_SIZE; i++) {
-
-        fgets(buffer, MAX_TEXT_LENGTH, input);
-        data = atoi(buffer);
-        ias.memory[i] = data;
-    }*/
     
     /*
     * Armazena instruções em memória
@@ -95,7 +98,7 @@ int main (int argc, char *argv[]){
     int instructionInt;
     int instructionsInt[256];
 
-    while(fgets(buffer, MAX_TEXT_LENGTH, input)){
+    do {
         instructionInt = 0;
 
         line("-", 30);
@@ -129,7 +132,7 @@ int main (int argc, char *argv[]){
         instructionsInt[lineCounter] = instructionInt;
 
         lineCounter++;
-    }
+    } while(fgets(buffer, MAX_TEXT_LENGTH, input));
 
     // Enumera as instrucoes compiladas e constroi as 'words' do IAS juntando duas instrucoes
     line("~", 30);
@@ -141,14 +144,20 @@ int main (int argc, char *argv[]){
 
         if (i % 2 == 0) {
             words[i/2] = instructionsInt[i];
+            words[i/2] = words[i/2] << 20;
         } else {
-            words[i/2] = (words[i/2] << 20) | instructionsInt[i];
+            words[i/2] = words[i/2] | instructionsInt[i];
+        }
+
+        if ((i % 2 != 0) || (i == lineCounter-1)) {
+            ias.memory[memorylimit] = words[i/2];
+            memorylimit++;
         }
     }
 
     line("~", 30);
     printf("\tPalavras\n");
-    for (int i = 0; i < lineCounter/2; i++) {
+    for (int i = 0; i < lineCounter/2 + 1; i++) {
         line("-", 20);
         printf("Palavra %d: %lld\n", i+1, words[i]);
         printBinary(words[i]);
@@ -163,9 +172,45 @@ int main (int argc, char *argv[]){
     *         HORA DE SIMULAR!       *
      * * * * * * * * * * * * * * * * */
 
+    /*
+    int PC;
+    int statusER, statusEX, statusBO, statusDC, status BM = 0; // Significa se o prioxmo passo do pipeline está livre e pode receber outra instrução
+    while (tem instrução as executar) {
+        statusER, statusEX, statusBO, statusDC, status BM = 0; // ?
+
+        statusER = escreverRes(ER); // ?
+
+        if (statusER) {
+            statusEX = executar(EX);
+            ER = EX;
+        }
+
+        if (statusEX) {
+            statusBO = buscarOperandos(BO);
+            EX = BO;
+        }
+
+        if (statusBO) {
+            decodificar(DC);
+            BO = DC;
+
+        if (statusDC) {
+            if (PC % 2 == 0) {
+                BM = extrairInstruçãoDaEsquerda();
+            } else {
+                BM = extrairInstruçãoDaDireita();
+            }
+            buscarNaMemo(BM);
+            DC = BM;
+        }
+    }
+    */
+
     // Mostra o que está na memória
+    line("~", 30);
+    printf("      Memória compilada\n");
     for (int i = 0; i < memorylimit; i++) {
-        printf(" - %ld - \n", ias.memory[i]);
+        printf("-\t%ld\t-\n", ias.memory[i]);
     }
 
     // Finaliza
