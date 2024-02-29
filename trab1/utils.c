@@ -8,6 +8,38 @@ int FileIsNull(FILE *input){
     return (input == NULL) ? 1 : 0;
 }
 
+int extrairInstrucaoDaEsquerda (int instruction) {
+    return 1;
+}
+
+int extrairInstrucaoDaDireita (int instruction) {
+    return 1;
+}
+
+int buscarNaMemoria (IAS ias, PIPELINE pip) {
+    // Busca na memoria
+    // Acabados os ciclos da busca, verifica se proximo passo do pipeline == 0
+    // Caso verdadeiro, proximo passo recebe o q esta na busca e busca recebe 0
+    // Talvez nem precise retornar então
+    return 1;
+}
+
+int decodificar (IAS ias, PIPELINE pip) {
+    return 1;
+}
+
+int buscarOperandos (IAS ias, PIPELINE pip) {
+    return 1;
+}
+
+int executar (IAS ias, PIPELINE pip) {
+    return 1;
+}
+
+int escreverRes (IAS ias, PIPELINE pip) {
+    return 1;
+}
+
 int removerX(char *str) { // Remove e retorna a parte variável da string da instrução
     int lidos = 0; // Número de caracteres lidos
     int escritos = 0; // Número de caracteres escritos
@@ -81,4 +113,26 @@ void printBinary(long long n) {
         printf("%d", bits[j]);
     }
     printf("\n");
+}
+
+char* opcode_index(char *op, char *op_list[], char *binary_opcode[]){
+    printf("-- comparando...\n");
+    for(int i=0; i<21; i++){
+        printf("- %s, %s\n", op_list[i], op);
+        if(strncmp(op_list[i], op, strlen(op_list[i])) == 0){
+            printf("-- achei!\n");
+            return binary_opcode[i];
+        }
+    }
+    return "";
+}
+
+
+void write_output(IAS ias, FILE *output, long long words[], int size){
+    for(int j=0; j<size; j++){
+        fprintf(output, "%" PRId64 "\n", ias.memory[j]);
+    }
+    for(int i=0; i<size; i++){
+        // fprintf(output, "%lld\n", words[i]);
+    }
 }

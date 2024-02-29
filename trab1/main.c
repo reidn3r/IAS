@@ -12,42 +12,17 @@
 #define DATA_SIZE 500
 #define PROGRAM_ADDR_START 500
 
-typedef struct IAS {
-    int64_t MBR;    // Memory buffer register
-    int64_t MAR;    // Memory address register
-
-    int64_t IR;     // Instruction register
-    int64_t IBR;    // Instruction buffer register
-
-    int64_t PC;     // Program counter
-    int64_t AC;     // Accumulator
-    int64_t MQ;     // Multiplier quotient 
-
-    int64_t memory[4096]; // Memória tem tamanho de 4096 palavras
-    int memorylimit; // Quanto da memória realmente está sendo usada
-} IAS;
-
-typedef struct PIPELINE {
-    int64_t BM;
-    int64_t DC;
-    int64_t BO;
-    int64_t EX;
-    int64_t ER;
-} PIPELINE;
-
 char *OP_ARRAY[] = {"LOAD MQ", "LOAD MQ,M()", "STOR M()", "LOAD M()", "LOAD -M()", "LOAD |M()|", "LOAD -|M()|", "JUMP M(,0:19)", "JUMP M(,20:39)", "JUMP+ M(,0:19)","JUMP+ M(,20:39)", "ADD M()", "ADD |M()|", "SUB M()", "SUB |M()|", "MUL M()", "DIV M()", "LSH", "RSH", "STOR M(,8:19)", "STOR M(,28:39)"};
 
 char *BINARY[] = {"00001010", "00001001", "00100001", "00000001", "00000010", "00000011", "00000100", "00001101", "00001110", "00001111", "00010000", "00000101", "00000111", "00000110", "00001000", "00001011", "00001100", "00010100", "00010101", "00010010", "00010011"};
 
 int CYCLES[21]; // Será preenchido depois 
 
-char *opcode_index(char *op, char *op_list[], char *binary_opcode[]);
-void write_output(IAS ias, FILE *output, long long words[], int size);
-
 int main (int argc, char *argv[]){
     FILE *input;
     FILE *output;
     IAS ias;
+    PIPELINE pip;
     
     // Verifica se o programa foi chamado corretamente
     if (argc == 5 && strcmp(argv[1], "-p") == 0 && strcmp(argv[3], "-i") == 0) {
@@ -168,75 +143,54 @@ int main (int argc, char *argv[]){
     write_output(ias, output, words, lineCounter/2);
     // write_output(ias, output, words, size);
 
-    /* * * * * * * * * * * * * * * * *
-    *         HORA DE SIMULAR!       *
-     * * * * * * * * * * * * * * * * */
-
-    /*
-    int PC;
-    int statusER, statusEX, statusBO, statusDC, status BM = 0; // Significa se o prioxmo passo do pipeline está livre e pode receber outra instrução
-    while (tem instrução as executar) {
-        statusER, statusEX, statusBO, statusDC, status BM = 0; // ?
-
-        statusER = escreverRes(ER); // ?
-
-        if (statusER) {
-            statusEX = executar(EX);
-            ER = EX;
-        }
-
-        if (statusEX) {
-            statusBO = buscarOperandos(BO);
-            EX = BO;
-        }
-
-        if (statusBO) {
-            decodificar(DC);
-            BO = DC;
-
-        if (statusDC) {
-            if (PC % 2 == 0) {
-                BM = extrairInstruçãoDaEsquerda();
-            } else {
-                BM = extrairInstruçãoDaDireita();
-            }
-            buscarNaMemo(BM);
-            DC = BM;
-        }
-    }
-    */
-
     // Mostra o que está na memória
     line("~", 30);
     printf("      Memória compilada\n");
     for (int i = 0; i < memorylimit; i++) {
-        printf("-\t%ld\t-\n", ias.memory[i]);
+        printf("-\t%ld\t\t-\n", ias.memory[i]);
+    }
+
+    /* * * * * * * * * * * * * * * * *
+    *         HORA DE SIMULAR!       *
+     * * * * * * * * * * * * * * * * */
+
+    ias.PC = atoi(argv[4]);
+    int statusER = 0, statusEX = 0, statusBO = 0, statusDC = 0, statusBM = 0;
+    while (ias.PC < 10 /* há instruções a executar */) {
+        statusER = escreverRes(ias, pip);
+        statusEX = statusER ? executar(ias, pip) : 0;
+        statusBO = statusEX ? buscarOperandos(ias, pip) : 0;
+        statusDC = statusBO ? decodificar(ias, pip) : 0;
+        
+        if (statusDC) {
+            if (ias.PC % 2 == 0) {
+                statusBM = extrairInstrucaoDaEsquerda(ias.memory[ias.PC]);
+            } else {
+                statusBM = extrairInstrucaoDaDireita(ias.memory[ias.PC]);
+            }
+            if (statusBM) {
+                buscarNaMemoria(ias, pip);
+                pip.DC = pip.BM;
+            }
+        }
+
+        // Atualize o contador do programa, verifique se há mais instruções para executar
+        // e libere os estágios do pipeline conforme necessário.
+
+        line("-=", 20);
+        printf("BM -> %lld\n", pip.BM);
+        printf("DC -> %lld\n", pip.DC);
+        printf("BO -> %lld\n", pip.BO);
+        printf("EX -> %lld\n", pip.EX);
+        printf("ER -> %lld\n", pip.ER);
+        line("~", 20);
+        printf("PC -> %lld\n", ias.PC);
+
+        ias.PC++;
     }
 
     // Finaliza
     fclose(input);
     fclose(output);
     return 0;
-}
-
-char* opcode_index(char *op, char *op_list[], char *binary_opcode[]){
-    printf("-- comparando...\n");
-    for(int i=0; i<21; i++){
-        printf("- %s, %s\n", op_list[i], op);
-        if(strncmp(op_list[i], op, strlen(op_list[i])) == 0){
-            printf("-- achei!\n");
-            return binary_opcode[i];
-        }
-    }
-    return "";
-}
-
-
-void write_output(IAS ias, FILE *output, long long words[], int size){
-    for(int j=0; j<DATA_SIZE; j++){
-        fprintf(output, "%" PRId64 "\n", ias.memory[j]);
-    }
-    for(int i=0; i<size; i++){
-        // fprintf(output, "%lld\n", words[i]);
-    }
 }
