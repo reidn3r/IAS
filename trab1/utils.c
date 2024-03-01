@@ -55,7 +55,7 @@ int executar (IAS *ias, PIPELINE *pip, int *cycles) {
     // Executar
     (*cycles)--;
 
-    if (pip->ER == 0 && pip->EX != 0 && *cycles == 0) {
+    if (pip->ER == 0 && pip->EX != 0 && *cycles < 1) {
         pip->ER = pip->EX;
         pip->EX = 0;
         return 1;

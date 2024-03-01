@@ -207,13 +207,13 @@ int main (int argc, char *argv[]){
         // e libere os estágios do pipeline conforme necessário.
 
         line("-=", 20);
-        printf("BM -> %lld\n", pip.BM);
-        printf("DC -> %lld\n", pip.DC);
-        printf("BO -> %lld\n", pip.BO);
-        printf("EX -> %lld\n", pip.EX);
-        printf("ER -> %lld\n", pip.ER);
+        printf("BM -> %" PRId64 "\n", pip.BM);
+        printf("DC -> %" PRId64 "\n", pip.DC);
+        printf("BO -> %" PRId64 "\n", pip.BO);
+        printf("EX -> %" PRId64 "\n", pip.EX);
+        printf("ER -> %" PRId64 "\n", pip.ER);
         line("~", 20);
-        printf("PC -> %lld\n", ias.PC);
+        printf("PC -> %" PRId64 "\n", ias.PC);
     }
 
     // Finaliza
