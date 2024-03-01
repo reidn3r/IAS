@@ -136,3 +136,34 @@ void write_output(IAS ias, FILE *output, long long words[], int size){
         // fprintf(output, "%lld\n", words[i]);
     }
 }
+
+int isNumeric(const char *str) {
+    // Verifica se a string é vazia
+    if (*str == '\0'){
+        return 0;
+    }
+
+    // Verifica cada caractere da string
+    while (*str != '\0') {
+        // Se o caractere não for um dígito, retorna 0
+        if (!isdigit(*str)){
+            return 0;
+        }
+        str++; // Move para o próximo caractere
+    }
+
+    // Se todos os caracteres forem dígitos, retorna 1
+    return 1;
+}
+
+void assign_clock_array(int clock, char *opcode_buffer, int cicle_array[], char *opcode_array[]){
+    char *opcode_token;
+    char opcode_copy[32]; //Copia para envitar segmentation fault
+    for(int i=0; i<21; i++){
+        strcpy(opcode_copy, opcode_array[i]);
+        opcode_token = strtok(opcode_copy, " ");
+        if(strcmp(opcode_token, opcode_buffer) == 0){
+            cicle_array[i] = (clock > 0) ? clock : 0;
+        }
+    }
+}

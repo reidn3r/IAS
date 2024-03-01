@@ -40,10 +40,33 @@ int main (int argc, char *argv[]){
     /*
     * Lê quantos ciclos cada instrução leva
     */
+    char clock_opcode[MAX_TEXT_LENGTH], *opcode_buffer;
+    int clock_opcode_counter, clocks, clock_counter= 0; 0; 0;
+    int isnumeric_opcode = 0;
+    do{
+        fgets(clock_opcode, MAX_TEXT_LENGTH, input);
+        opcode_buffer = strtok(clock_opcode, ": "); //Pega o opcode, parte textual de opcode: ciclos
+        removerNewLine(opcode_buffer);
 
-        // TODO
-        // fgets lê até onde começam os dados
+        isnumeric_opcode = isNumeric(opcode_buffer);
+        char *clocks_string = strtok(NULL, " "); //Pega o numero que representa o clock
+        if(!isnumeric_opcode){
+            if(clocks_string == NULL){
+                break;
+            }
 
+            clocks = atoi(clocks_string);
+            assign_clock_array(clocks, opcode_buffer, CYCLES, OP_ARRAY); //associa os clocks no vetor CYCLE
+            clock_counter++; //Conta a qtde. de linhas do tipo opcode:clocks
+        }
+        else{
+            break;
+        }
+    }while(!isnumeric_opcode);
+
+    for(int i=0; i<21; i++){
+        printf("%d ", CYCLES[i]);
+    }
     /*
     * Armazena dados em memória
     */

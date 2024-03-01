@@ -39,6 +39,7 @@ void write_output(IAS ias, FILE *output, long long words[], int size);
 
 int extrairInstrucaoDaEsquerda (int instruction);
 int extrairInstrucaoDaDireita (int instruction);
+void assign_clock_array(int clock, char *opcode_buffer, int cicle_array[], char *opcode_array[]);
 
 int buscarNaMemoria (IAS ias, PIPELINE pip);
 int decodificar (IAS ias, PIPELINE pip);
