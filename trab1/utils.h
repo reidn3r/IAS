@@ -42,10 +42,10 @@ int extrairInstrucaoDaDireita (int instruction);
 void assign_clock_array(int clock, char *opcode_buffer, int cicle_array[], char *opcode_array[]);
 int isNumeric(const char *str);
 
-int buscarNaMemoria (IAS ias, PIPELINE pip);
-int decodificar (IAS ias, PIPELINE pip);
-int buscarOperandos (IAS ias, PIPELINE pip);
-int executar (IAS ias, PIPELINE pip);
-int escreverRes (IAS ias, PIPELINE pip);
+int buscarNaMemoria (IAS *ias, PIPELINE *pip);
+int decodificar (IAS *ias, PIPELINE *pip);
+int buscarOperandos (IAS *ias, PIPELINE *pip);
+int executar (IAS *ias, PIPELINE *pip, int *cycles);
+int escreverRes (IAS *ias, PIPELINE *pip);
 
 #endif

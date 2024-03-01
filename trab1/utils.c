@@ -16,27 +16,60 @@ int extrairInstrucaoDaDireita (int instruction) {
     return 1;
 }
 
-int buscarNaMemoria (IAS ias, PIPELINE pip) {
+int buscarNaMemoria (IAS *ias, PIPELINE *pip) {
     // Busca na memoria
     // Acabados os ciclos da busca, verifica se proximo passo do pipeline == 0
     // Caso verdadeiro, proximo passo recebe o q esta na busca e busca recebe 0
     // Talvez nem precise retornar então
-    return 1;
+
+    if (pip->DC == 0 && pip->BM != 0) {
+        pip->DC = pip->BM;
+        pip->BM = 0;
+        return 1;
+    }
+    return 0;
 }
 
-int decodificar (IAS ias, PIPELINE pip) {
-    return 1;
+int decodificar (IAS *ias, PIPELINE *pip) {
+
+    if (pip->BO == 0 && pip->DC != 0) {
+        pip->BO = pip->DC;
+        pip->DC = 0;
+        return 1;
+    }
+    return 0;
 }
 
-int buscarOperandos (IAS ias, PIPELINE pip) {
-    return 1;
+int buscarOperandos (IAS *ias, PIPELINE *pip) {
+
+    if (pip->EX == 0 && pip->BO != 0) {
+        pip->EX = pip->BO;
+        pip->BO = 0;
+        return 1;
+    }
+    return 0;
 }
 
-int executar (IAS ias, PIPELINE pip) {
-    return 1;
+int executar (IAS *ias, PIPELINE *pip, int *cycles) {
+    
+    // Executar
+    (*cycles)--;
+
+    if (pip->ER == 0 && pip->EX != 0 && *cycles == 0) {
+        pip->ER = pip->EX;
+        pip->EX = 0;
+        return 1;
+    }
+    return 0;
 }
 
-int escreverRes (IAS ias, PIPELINE pip) {
+int escreverRes (IAS *ias, PIPELINE *pip) {
+    if (pip->ER == 0) return 0;
+
+    // Escrever resultado
+
+    pip->ER = 0;
+
     return 1;
 }
 
@@ -158,7 +191,7 @@ int isNumeric(const char *str) {
 
 void assign_clock_array(int clock, char *opcode_buffer, int cicle_array[], char *opcode_array[]){
     char *opcode_token;
-    char opcode_copy[32]; //Copia para envitar segmentation fault
+    char opcode_copy[32]; //Copia para evitar segmentation fault
     for(int i=0; i<21; i++){
         strcpy(opcode_copy, opcode_array[i]);
         opcode_token = strtok(opcode_copy, " ");

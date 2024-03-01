@@ -178,23 +178,29 @@ int main (int argc, char *argv[]){
      * * * * * * * * * * * * * * * * */
 
     ias.PC = atoi(argv[4]);
+    pip.BM = 0, pip.BO = 0, pip.DC = 0, pip.ER = 0, pip.EX = 0;
     int statusER = 0, statusEX = 0, statusBO = 0, statusDC = 0, statusBM = 0;
+    int exCycles = 1;
     while (ias.PC < 10 /* há instruções a executar */) {
-        statusER = escreverRes(ias, pip);
-        statusEX = statusER ? executar(ias, pip) : 0;
-        statusBO = statusEX ? buscarOperandos(ias, pip) : 0;
-        statusDC = statusBO ? decodificar(ias, pip) : 0;
-        
-        if (statusDC) {
+        escreverRes(&ias, &pip);
+
+        statusEX = executar(&ias, &pip, &exCycles);
+        if (statusEX) {
+            exCycles = 3; // valor arbitrário por enquanto
+        }
+
+        buscarOperandos(&ias, &pip);
+        decodificar(&ias, &pip);
+    
+        buscarNaMemoria(&ias, &pip);
+        if (pip.BM == 0) {
             if (ias.PC % 2 == 0) {
-                statusBM = extrairInstrucaoDaEsquerda(ias.memory[ias.PC]);
+                ias.IR = extrairInstrucaoDaEsquerda(ias.memory[ias.PC]);
             } else {
-                statusBM = extrairInstrucaoDaDireita(ias.memory[ias.PC]);
+                ias.IR = extrairInstrucaoDaDireita(ias.memory[ias.PC]);
             }
-            if (statusBM) {
-                buscarNaMemoria(ias, pip);
-                pip.DC = pip.BM;
-            }
+            pip.BM = ias.IR;
+            ias.PC++;
         }
 
         // Atualize o contador do programa, verifique se há mais instruções para executar
@@ -208,8 +214,6 @@ int main (int argc, char *argv[]){
         printf("ER -> %lld\n", pip.ER);
         line("~", 20);
         printf("PC -> %lld\n", ias.PC);
-
-        ias.PC++;
     }
 
     // Finaliza
