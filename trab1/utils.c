@@ -9,10 +9,14 @@ int FileIsNull(FILE *input){
 }
 
 int64_t extrairInstrucaoDaEsquerda (int64_t instruction) {
+    // TODO
+    
     return instruction;
 }
 
 int64_t extrairInstrucaoDaDireita (int64_t instruction) {
+    // TODO
+
     return instruction;
 }
 

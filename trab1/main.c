@@ -82,6 +82,7 @@ int main (int argc, char *argv[]){
         memorylimit++;
         fgets (buffer, MAX_TEXT_LENGTH, input);
     }
+    ias.PC = memorylimit + atoi(argv[4]); // PC onde começam as instruções + argumento da linha de comando
     
     /*
     * Armazena instruções em memória
@@ -177,16 +178,17 @@ int main (int argc, char *argv[]){
     *         HORA DE SIMULAR!       *
      * * * * * * * * * * * * * * * * */
 
-    ias.PC = atoi(argv[4]);
     pip.BM = 0, pip.BO = 0, pip.DC = 0, pip.ER = 0, pip.EX = 0;
-    int statusER = 0, statusEX = 0, statusBO = 0, statusDC = 0, statusBM = 0;
+    int statusER = 0, statusEX = 0, statusBO = 0, statusDC = 0, statusBM = 0; // 1, se esse passo do pipeline conseguiu executar
     int totalCycles = 1, exCycles = 1;
     int pipelineCleared = 0, firstTime = 1;
-    while (!pipelineCleared /* há instruções a executar */) {
+    while (!pipelineCleared) { // Se o pip está limpo, finaliza
+
         escreverRes(&ias, &pip);
 
         statusEX = executar(&ias, &pip, &exCycles);
         if (statusEX) {
+            // tem q procurar no Cycles quantos ciclos a instrução que está no BO leva, e coloca nessa variável
             exCycles = 3; // valor arbitrário por enquanto
         }
 
@@ -196,6 +198,7 @@ int main (int argc, char *argv[]){
         statusBM = buscarNaMemoria(&ias, &pip);
         if (statusBM || firstTime) {
             if (ias.PC % 2 == 0) {
+                // Ainda tem q implementar certinho essas duas funções
                 ias.IR = extrairInstrucaoDaEsquerda(ias.memory[ias.PC]);
             } else {
                 ias.IR = extrairInstrucaoDaDireita(ias.memory[ias.PC]);
