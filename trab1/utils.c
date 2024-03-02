@@ -8,12 +8,12 @@ int FileIsNull(FILE *input){
     return (input == NULL) ? 1 : 0;
 }
 
-int extrairInstrucaoDaEsquerda (int instruction) {
-    return 1;
+int64_t extrairInstrucaoDaEsquerda (int64_t instruction) {
+    return instruction;
 }
 
-int extrairInstrucaoDaDireita (int instruction) {
-    return 1;
+int64_t extrairInstrucaoDaDireita (int64_t instruction) {
+    return instruction;
 }
 
 int buscarNaMemoria (IAS *ias, PIPELINE *pip) {
@@ -71,6 +71,10 @@ int escreverRes (IAS *ias, PIPELINE *pip) {
     pip->ER = 0;
 
     return 1;
+}
+
+int isPipelineCleared (PIPELINE pip) {
+    return (!pip.BM && !pip.DC && !pip.BO && !pip.EX && !pip.ER);
 }
 
 int removerX(char *str) { // Remove e retorna a parte variável da string da instrução

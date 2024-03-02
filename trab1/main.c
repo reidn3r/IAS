@@ -180,8 +180,9 @@ int main (int argc, char *argv[]){
     ias.PC = atoi(argv[4]);
     pip.BM = 0, pip.BO = 0, pip.DC = 0, pip.ER = 0, pip.EX = 0;
     int statusER = 0, statusEX = 0, statusBO = 0, statusDC = 0, statusBM = 0;
-    int exCycles = 1;
-    while (ias.PC < 10 /* há instruções a executar */) {
+    int totalCycles = 1, exCycles = 1;
+    int pipelineCleared = 0, firstTime = 1;
+    while (!pipelineCleared /* há instruções a executar */) {
         escreverRes(&ias, &pip);
 
         statusEX = executar(&ias, &pip, &exCycles);
@@ -192,8 +193,8 @@ int main (int argc, char *argv[]){
         buscarOperandos(&ias, &pip);
         decodificar(&ias, &pip);
     
-        buscarNaMemoria(&ias, &pip);
-        if (pip.BM == 0) {
+        statusBM = buscarNaMemoria(&ias, &pip);
+        if (statusBM || firstTime) {
             if (ias.PC % 2 == 0) {
                 ias.IR = extrairInstrucaoDaEsquerda(ias.memory[ias.PC]);
             } else {
@@ -203,17 +204,20 @@ int main (int argc, char *argv[]){
             ias.PC++;
         }
 
-        // Atualize o contador do programa, verifique se há mais instruções para executar
-        // e libere os estágios do pipeline conforme necessário.
-
         line("-=", 20);
+        printf("cycle: %d\n", totalCycles);
+        line("~", 15);
         printf("BM -> %" PRId64 "\n", pip.BM);
         printf("DC -> %" PRId64 "\n", pip.DC);
         printf("BO -> %" PRId64 "\n", pip.BO);
         printf("EX -> %" PRId64 "\n", pip.EX);
         printf("ER -> %" PRId64 "\n", pip.ER);
-        line("~", 20);
+        line("~", 15);
         printf("PC -> %" PRId64 "\n", ias.PC);
+
+        pipelineCleared = isPipelineCleared(pip);
+        if (firstTime) firstTime = 0;
+        totalCycles++;
     }
 
     // Finaliza

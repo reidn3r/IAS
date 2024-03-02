@@ -37,10 +37,11 @@ void line (char *symbols, int length);
 char *opcode_index(char *op, char *op_list[], char *binary_opcode[]);
 void write_output(IAS ias, FILE *output, long long words[], int size);
 
-int extrairInstrucaoDaEsquerda (int instruction);
-int extrairInstrucaoDaDireita (int instruction);
+int64_t extrairInstrucaoDaEsquerda (int64_t instruction);
+int64_t extrairInstrucaoDaDireita (int64_t instruction);
 void assign_clock_array(int clock, char *opcode_buffer, int cicle_array[], char *opcode_array[]);
 int isNumeric(const char *str);
+int isPipelineCleared (PIPELINE pip);
 
 int buscarNaMemoria (IAS *ias, PIPELINE *pip);
 int decodificar (IAS *ias, PIPELINE *pip);
