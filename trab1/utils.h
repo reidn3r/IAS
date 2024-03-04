@@ -38,10 +38,11 @@ void line (char *symbols, int length);
 char *opcode_index(char *op, char *op_list[], char *binary_opcode[]);
 void write_output(IAS ias, FILE *output, long long words[], int size);
 
-int64_t extrairInstrucao (int64_t *memory, int64_t instructionsStart, int64_t PC);
+int64_t extrairInstrucao (int64_t *memory, int64_t PC);
 
 void assign_clock_array(int clock, char *opcode_buffer, int cicle_array[], char *opcode_array[]);
 int isNumeric(const char *str);
+void clearPipeline (PIPELINE *pip);
 int isPipelineCleared (PIPELINE pip);
 
 int buscarNaMemoria (IAS *ias, PIPELINE *pip);

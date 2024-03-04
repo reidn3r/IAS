@@ -83,7 +83,7 @@ int main (int argc, char *argv[]){
         fgets (buffer, MAX_TEXT_LENGTH, input);
     }
     ias.instructionsStart = memorylimit;
-    ias.PC = memorylimit + atoi(argv[4]); // PC onde começam as instruções + argumento da linha de comando
+    ias.PC = (memorylimit * 2) + atoi(argv[4]); // PC onde começam as instruções + argumento da linha de comando
     
     /*
     * Armazena instruções em memória
@@ -197,9 +197,13 @@ int main (int argc, char *argv[]){
         decodificar(&ias, &pip);
     
         statusBM = buscarNaMemoria(&ias, &pip);
-        if (statusBM || firstTime) {
 
-            ias.IR = extrairInstrucao (ias.memory, ias.instructionsStart, ias.PC);
+        if (ias.PC > (memorylimit * 2)) { // Acabaram as intruções
+            pip.BM = 0;
+
+        } else if (pip.BM == 0) { // Não acabou e temos mais instruções
+
+            ias.IR = extrairInstrucao (ias.memory, ias.PC);
             pip.BM = ias.IR;
             ias.PC++;
         }
