@@ -8,17 +8,19 @@ int FileIsNull(FILE *input){
     return (input == NULL) ? 1 : 0;
 }
 
-int64_t extrairInstrucaoDaEsquerda (int64_t instruction) {
-    // TODO
-    
-    return instruction;
+int64_t extrairInstrucao (int64_t *memory, int64_t instructionsStart, int64_t PC) {
+    // TODO verificar se chegou no final da memoria e retornar 0
+
+    int64_t word = memory[instructionsStart + (PC - instructionsStart) / 2];
+
+    if ((PC - instructionsStart) % 2 == 0) {
+        return word >> 20;
+
+    } else {
+        return word & ((1 << 20) -1);
+    }
 }
 
-int64_t extrairInstrucaoDaDireita (int64_t instruction) {
-    // TODO
-
-    return instruction;
-}
 
 int buscarNaMemoria (IAS *ias, PIPELINE *pip) {
     // Busca na memoria

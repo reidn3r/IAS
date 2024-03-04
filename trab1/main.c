@@ -82,6 +82,7 @@ int main (int argc, char *argv[]){
         memorylimit++;
         fgets (buffer, MAX_TEXT_LENGTH, input);
     }
+    ias.instructionsStart = memorylimit;
     ias.PC = memorylimit + atoi(argv[4]); // PC onde começam as instruções + argumento da linha de comando
     
     /*
@@ -138,7 +139,7 @@ int main (int argc, char *argv[]){
     printf("\tInstrucoes\n");
     long long words[256];
     for (int i = 0; i < lineCounter; i++) {
-        printf("Instrucao %d: ", i+1);
+        printf("Instrucao %d:\t%d\n", i+1, instructionsInt[i]);
         printBinary(instructionsInt[i]);
 
         if (i % 2 == 0) {
@@ -197,12 +198,8 @@ int main (int argc, char *argv[]){
     
         statusBM = buscarNaMemoria(&ias, &pip);
         if (statusBM || firstTime) {
-            if (ias.PC % 2 == 0) {
-                // Ainda tem q implementar certinho essas duas funções
-                ias.IR = extrairInstrucaoDaEsquerda(ias.memory[ias.PC]);
-            } else {
-                ias.IR = extrairInstrucaoDaDireita(ias.memory[ias.PC]);
-            }
+
+            ias.IR = extrairInstrucao (ias.memory, ias.instructionsStart, ias.PC);
             pip.BM = ias.IR;
             ias.PC++;
         }

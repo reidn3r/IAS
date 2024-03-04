@@ -16,6 +16,7 @@ typedef struct IAS {
     int64_t MQ;     // Multiplier quotient 
 
     int64_t memory[4096]; // Memória tem tamanho de 4096 palavras
+    int64_t instructionsStart; // Onde começam as instruções
     int memorylimit; // Quanto da memória realmente está sendo usada
 } IAS;
 
@@ -37,8 +38,8 @@ void line (char *symbols, int length);
 char *opcode_index(char *op, char *op_list[], char *binary_opcode[]);
 void write_output(IAS ias, FILE *output, long long words[], int size);
 
-int64_t extrairInstrucaoDaEsquerda (int64_t instruction);
-int64_t extrairInstrucaoDaDireita (int64_t instruction);
+int64_t extrairInstrucao (int64_t *memory, int64_t instructionsStart, int64_t PC);
+
 void assign_clock_array(int clock, char *opcode_buffer, int cicle_array[], char *opcode_array[]);
 int isNumeric(const char *str);
 int isPipelineCleared (PIPELINE pip);
