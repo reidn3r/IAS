@@ -66,6 +66,7 @@ int executar (IAS *ias, PIPELINE *pip, int *cycles) {
 
     int opcode = pip->EX >> 12; // Extrai o opcode
     int X = pip->EX & ((1 << 12) -1); // Extrai o X
+    int64_t multiply_result;    //Usado em MUL M(X)
 
     switch (opcode) {
 
@@ -110,20 +111,33 @@ int executar (IAS *ias, PIPELINE *pip, int *cycles) {
 
         // -> Arithmetic
         case 0b00000101: // ADD M(X) Add M(X) to AC; put the result in AC
+            ias->AC += ias->memory[X]; 
             break;
         case 0b00000111: // ADD |M(X)| Add |M(X)| to AC; put the result in AC
+            ias->AC += absolute(ias->memory[X]); 
             break;
         case 0b00000110: // SUB M(X) Subtract M(X) from AC; put the result in AC
+            ias->AC -= ias->memory[X]; 
             break;
         case 0b00001000: // SUB |M(X)| Subtract |M(X)| from AC; put the remainder in AC
+            ias->AC -= absolute(ias->memory[X]);
             break;
         case 0b00001011: // MUL M(X) Multiply M(X) by MQ; put most significant bits of result in AC, put least significant bits in MQ
+            multiply_result = ias->MQ * ias->memory[X];
+            ias -> AC = multiply_result >> (64/2);
+            ias -> MQ = multiply_result << (64/2);
             break;
         case 0b00001100: // DIV M(X) Divide AC by M(X); put the quotient in MQ and the remainder in AC
+            if(ias->memory[X] != 0){
+                ias -> MQ = ias->AC/ias->memory[X];
+                ias->AC = ias->AC % ias->memory[X];
+            }
             break;
         case 0b00010100: // LSH Multiply accumulator by 2; that is, shift left one bit position
+            ias -> AC = ias -> AC << 1;
             break;
         case 0b00010101: // RSH Divide accumulator by 2; that is, shift right one position
+            ias -> AC = ias -> AC >> 1;
             break;
 
         // -> Address modify
