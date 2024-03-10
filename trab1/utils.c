@@ -77,14 +77,19 @@ int executar (IAS *ias, PIPELINE *pip, int *cycles) {
             ias->MQ = ias->memory[X];
             break;
         case 0b00100001: // STOR M(X) Transfer contents of accumulator to memory location X
+            ias->memory[X] = ias->AC;
             break;
         case 0b00000001: // LOAD M(X) Transfer M(X) to the accumulator
+            ias->AC = ias->memory[X];
             break;
         case 0b00000010: // LOAD –M(X) Transfer –M(X) to the accumulator
+            ias->AC = ias->memory[X] * -1;
             break;
         case 0b00000011: // LOAD |M(X)| Transfer absolute value of M(X) to the accumulator
+            ias->AC = absolute(ias->memory[X]);
             break;
         case 0b00000100: // LOAD –|M(X)| Transfer –|M(X)| to the accumulator
+            ias->AC = absolute(ias->memory[X]) * -1;
             break;
 
         // -> Unconditional branch
@@ -133,6 +138,10 @@ int executar (IAS *ias, PIPELINE *pip, int *cycles) {
     pip->EX = 0;
     return 1;
     
+}
+
+int64_t absolute(int64_t n){
+    return (n >= 0) ? n : -n;
 }
 
 int escreverRes (IAS *ias, PIPELINE *pip) {
