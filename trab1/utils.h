@@ -32,7 +32,10 @@ int FileIsNull(FILE *input);
 int removerX(char *str);
 void removerNewLine(char *str);
 unsigned int strToBin(const char *strBinario);
-void printBinary(long long n);
+void printBinary(int64_t n);
+char *intParaStringBinario(int num);
+char *buscaOpcodeDoBinario(char *bin);
+int buscaOpcodeIndex(char *opcode, char *opcode_list[]);
 void line (char *symbols, int length);
 
 char *opcode_index(char *op, char *op_list[], char *binary_opcode[]);

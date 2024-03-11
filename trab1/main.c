@@ -186,23 +186,29 @@ int main (int argc, char *argv[]){
     while (!pipelineCleared) { // Se o pip está limpo, finaliza
 
         escreverRes(&ias, &pip);
-
         statusEX = executar(&ias, &pip, &exCycles);
         if (statusEX) {
-            // tem q procurar no Cycles quantos ciclos a instrução que está no BO leva, e coloca nessa variável
-            exCycles = 3; // valor arbitrário por enquanto
+            // Busca quantos ciclos a instrução que está no BO leva, e armazena em exCycles
+            int64_t bo_instrucao = pip.BO;
+            char *bo_string_binario = intParaStringBinario(bo_instrucao);
+            char *opcode_binario = buscaOpcodeDoBinario(bo_string_binario);
+            int index_opcode = buscaOpcodeIndex(opcode_binario, BINARY);
+                // retorna o indice do opcode no array de binários definido no inicio do arquivo
+
+            exCycles = 0;
+            if(index_opcode != -1){
+                exCycles = CYCLES[index_opcode];
+            }
+            printf("ciclos da instrucao: %d\n", exCycles);
         }
 
         buscarOperandos(&ias, &pip);
         decodificar(&ias, &pip);
     
         statusBM = buscarNaMemoria(&ias, &pip);
-
         if (ias.PC > (memorylimit * 2)) { // Acabaram as intruções
             pip.BM = 0;
-
         } else if (pip.BM == 0) { // Não acabou e temos mais instruções
-
             ias.IR = extrairInstrucao (ias.memory, ias.PC);
             pip.BM = ias.IR;
             ias.PC++;
