@@ -57,6 +57,7 @@ int buscarOperandos (IAS *ias, PIPELINE *pip) {
 }
 
 int executar (IAS *ias, PIPELINE *pip, int *cycles) {
+    int64_t temp1, temp2;
 
     (*cycles)--;
 
@@ -105,8 +106,16 @@ int executar (IAS *ias, PIPELINE *pip, int *cycles) {
 
         // -> Conditional branch
         case 0b00001111: // JUMP + M ( X , 0 : 19) If number in the accumulator is nonnegative, take next instruction from left half of M(X)
+        if (!(ias->AC & ((int64_t) 1 << 40))) {
+            clearPipeline(pip);
+            ias->PC = X;
+        }
             break;
         case 0b00010000: // JUMP + M ( X , 20 : 39) If number in the accumulator is nonnegative, take next instruction from right half of M(X)
+        if (!(ias->AC & ((int64_t) 1 << 40))) {
+            clearPipeline(pip);
+            ias->PC = X + 1;
+        }
             break;
 
         // -> Arithmetic
@@ -142,10 +151,18 @@ int executar (IAS *ias, PIPELINE *pip, int *cycles) {
 
         // -> Address modify
         case 0b00010010: // STOR M(X,8:19) Replace left address field at M(X) by 12 rightmost bits of AC
-            break;
-        case 0b00010011: // STOR M(X,28:39) Replace right address field at M(X) by 12 rightmost bits of AC
+            temp1 = ias->AC & ((1 << 12) - 1); // pega os 12 digitos da direita de AC
+            temp2 = ((((int64_t) 1 << 8) - 1) << 32) | ((1 << 20) - 1); // 11111111000000000000 11111111111111111111 (filtro)
+            temp2 = ias->memory[X] & temp2; // apaga o endereço da instrução da esquerda de M(X)
+            ias->memory[X] = (temp1 << 20) | temp2; // coloca o novo endereço na memória
             break;
 
+        case 0b00010011: // STOR M(X,28:39) Replace right address field at M(X) by 12 rightmost bits of AC
+            temp1 = ias->AC & ((1 << 12) - 1); // pega os 12 digitos da direita de AC
+            temp2 = (((int64_t) 1 << 32) - 1) << 12; // 111111111111111111111111 11111111000000000000 (filtro)
+            temp2 = ias->memory[X] & temp2; // apaga o endereço da instrução da direita de M(X)
+            ias->memory[X] = temp1 | temp2; // coloca o novo endereço na memória
+            break;
     }
 
     pip->ER = pip->EX;
@@ -231,7 +248,7 @@ void line (char *symbols, int length) {
     printf("\n");
 }
 
-void printBinary(long long n) {
+void printBinary(int64_t n) {
     if (n == 0) {
         printf("0");
         return;
@@ -240,13 +257,13 @@ void printBinary(long long n) {
     int bits[64];
     int i = 0;
 
-    while (n > 0) {
+    while (n != 0) {
         bits[i++] = n % 2;
         n /= 2;
     }
 
     for (int j = i - 1; j >= 0; j--) {
-        printf("%d", bits[j]);
+        if (! bits[j]) printf("0"); else printf("1");
     }
     printf("\n");
 }

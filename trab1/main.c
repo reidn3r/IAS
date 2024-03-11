@@ -78,7 +78,7 @@ int main (int argc, char *argv[]){
     fgets (buffer, MAX_TEXT_LENGTH, input);
 
     while (isdigit(*buffer)) { // Lê até encontrar algo que não é número
-        ias.memory[memorylimit] = atoi(buffer);
+        ias.memory[memorylimit] = strtoll(buffer, NULL, 10);
         memorylimit++;
         fgets (buffer, MAX_TEXT_LENGTH, input);
     }
@@ -172,7 +172,7 @@ int main (int argc, char *argv[]){
     line("~", 30);
     printf("      Memória compilada\n");
     for (int i = 0; i < memorylimit; i++) {
-        printf("-\t%ld\t\t-\n", ias.memory[i]);
+        printf("-\t%" PRId64 "\t-\n", ias.memory[i]);
     }
 
     /* * * * * * * * * * * * * * * * *
