@@ -64,7 +64,6 @@ int executar (IAS *ias, PIPELINE *pip, int *cycles) {
     if (!(pip->ER == 0 && pip->EX != 0 && *cycles < 1)) return 0;
 
     // Executar
-
     int opcode = pip->EX >> 12; // Extrai o opcode
     int X = pip->EX & ((1 << 12) -1); // Extrai o X
     int64_t multiply_result;    //Usado em MUL M(X)
@@ -319,4 +318,44 @@ void assign_clock_array(int clock, char *opcode_buffer, int cicle_array[], char 
             cicle_array[i] = (clock > 0) ? clock : 0;
         }
     }
+}
+
+char *intParaStringBinario(int num) {
+    // Aloca espaço para a string (20 bits + 1 para o caractere nulo)
+    char *binaryString = (char *)malloc(21 * sizeof(char));
+    if (binaryString == NULL) {
+        printf("Erro de alocação de memória\n");
+        exit(1);
+    }
+    
+    // Define o último caractere da string como '\0'
+    binaryString[20] = '\0';
+
+    // Loop para preencher a string com os 8 bits do número
+    for (int i = 19; i >= 0; i--) {
+        // Verifica se o bit correspondente está definido ou não
+        if (num & (1 << i))
+            binaryString[19 - i] = '1';
+        else
+            binaryString[19 - i] = '0';
+    }
+
+    return binaryString;
+}
+
+char *buscaOpcodeDoBinario(char *bin){
+    char *result = (char *)malloc(8 * sizeof(char)); 
+    for(int i=0; i<8; i++){
+        result[i] = bin[i];
+    }
+    return result;
+}
+
+int buscaOpcodeIndex(char *opcode, char *opcode_list[]){
+    for(int i=0; i<21; i++){
+        if(strcmp(opcode, opcode_list[i]) == 0){
+            return i;
+        }
+    }
+    return -1;
 }
