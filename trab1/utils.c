@@ -292,12 +292,12 @@ int string_length(const char *str) {
     return length;
 }
 
-void write_output(IAS ias, FILE *output, long long words[], int size){
-    for(int j=0; j<size; j++){
-        fprintf(output, "%" PRId64 "\n", ias.memory[j]);
-    }
-    for(int i=0; i<size; i++){
-        // fprintf(output, "%lld\n", words[i]);
+void write_output(IAS *ias, FILE *output, int64_t words[]){
+
+    int i = 0;
+    while (ias->memory[i] != 0) {
+        fprintf(output, "%" PRId64 "\n", ias->memory[i]);
+        i++;
     }
 }
 

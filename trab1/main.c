@@ -20,6 +20,7 @@ int CYCLES[] = {1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1}; // Será alterad
 
 int main (int argc, char *argv[]){
     FILE *input;
+    FILE *midput;
     FILE *output;
     IAS ias;
     PIPELINE pip;
@@ -27,6 +28,7 @@ int main (int argc, char *argv[]){
     // Verifica se o programa foi chamado corretamente
     if (argc == 5 && strcmp(argv[1], "-p") == 0 && strcmp(argv[3], "-i") == 0) {
         input = fopen(argv[2], "r");
+        midput = fopen("memo.ias", "w");
         output = fopen(strcat(argv[2],".out"), "w");
     } else {
         fprintf(stderr, "Argumentos incorretos!\n");
@@ -40,7 +42,7 @@ int main (int argc, char *argv[]){
     /*
     * Lê quantos ciclos cada instrução leva
     */
-   printf("-> Lendo quantos ciclos cada instrução leva...\n");
+   printf("-> Lendo quantos ciclos cada instrucao leva...\n");
     char clock_opcode[MAX_TEXT_LENGTH], *opcode_buffer;
     int clock_opcode_counter, clocks, clock_counter= 0; 0; 0;
     int isnumeric_opcode = 0;
@@ -140,7 +142,7 @@ int main (int argc, char *argv[]){
     // Enumera as instrucoes compiladas e constroi as 'words' do IAS juntando duas instrucoes
     line("~", 30);
     printf("\tInstrucoes\n");
-    long long words[256];
+    int64_t words[256];
     for (int i = 0; i < lineCounter; i++) {
         printf("Instrucao %d:\t%d\n", i+1, instructionsInt[i]);
         printBinary(instructionsInt[i]);
@@ -168,7 +170,6 @@ int main (int argc, char *argv[]){
 
     int size = sizeof(words)/sizeof(long long);
     printf("SIZE: %d\n", size);
-    write_output(ias, output, words, lineCounter/2);
     // write_output(ias, output, words, size);
 
     // Mostra o que está na memória
@@ -178,6 +179,7 @@ int main (int argc, char *argv[]){
         printf("-\t%" PRId64 "\t-\n", ias.memory[i]);
     }
 
+    write_output(&ias, midput, words);
     /* * * * * * * * * * * * * * * * *
     *         HORA DE SIMULAR!       *
      * * * * * * * * * * * * * * * * */
@@ -235,6 +237,8 @@ int main (int argc, char *argv[]){
         if (firstTime) firstTime = 0;
         totalCycles++;
     }
+
+    write_output(&ias, output, words);
 
     // Finaliza
     fclose(input);

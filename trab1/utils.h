@@ -40,7 +40,7 @@ void line (char *symbols, int length);
 int string_length(const char *str);
 
 char *opcode_index(char *op, char *op_list[], char *binary_opcode[]);
-void write_output(IAS ias, FILE *output, long long words[], int size);
+void write_output(IAS *ias, FILE *output, int64_t words[]);
 
 int64_t extrairInstrucao (int64_t *memory, int64_t PC);
 int64_t absolute(int64_t n);
