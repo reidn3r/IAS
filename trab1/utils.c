@@ -271,7 +271,8 @@ char* opcode_index(char *op, char *op_list[], char *binary_opcode[]){
     printf("-- comparando...\n");
     for(int i=0; i<21; i++){
         printf("- %s, %s\n", op_list[i], op);
-        if(strncmp(op_list[i], op, strlen(op_list[i])) == 0){
+
+        if(strncmp(op_list[i], op, string_length(op)) == 0){
             printf("-- achei!\n");
             return binary_opcode[i];
         }
@@ -279,6 +280,17 @@ char* opcode_index(char *op, char *op_list[], char *binary_opcode[]){
     return "";
 }
 
+int string_length(const char *str) {
+    int length = 0;
+
+    // Percorre a string caractere por caractere
+    for (int i = 0; str[i] != '\0'; i++) {
+        // Incrementa o comprimento sempre que encontrar um caractere
+        length++;
+    }
+
+    return length;
+}
 
 void write_output(IAS ias, FILE *output, long long words[], int size){
     for(int j=0; j<size; j++){
@@ -320,7 +332,7 @@ void assign_clock_array(int clock, char *opcode_buffer, int cicle_array[], char 
     }
 }
 
-char *intParaStringBinario(int num) {
+char* intParaStringBinario(int num) {
     // Aloca espaço para a string (20 bits + 1 para o caractere nulo)
     char *binaryString = (char *)malloc(21 * sizeof(char));
     if (binaryString == NULL) {

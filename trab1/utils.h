@@ -37,6 +37,7 @@ char *intParaStringBinario(int num);
 char *buscaOpcodeDoBinario(char *bin);
 int buscaOpcodeIndex(char *opcode, char *opcode_list[]);
 void line (char *symbols, int length);
+int string_length(const char *str);
 
 char *opcode_index(char *op, char *op_list[], char *binary_opcode[]);
 void write_output(IAS ias, FILE *output, long long words[], int size);

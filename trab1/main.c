@@ -16,7 +16,7 @@ char *OP_ARRAY[] = {"LOAD MQ", "LOAD MQ,M()", "STOR M()", "LOAD M()", "LOAD -M()
 
 char *BINARY[] = {"00001010", "00001001", "00100001", "00000001", "00000010", "00000011", "00000100", "00001101", "00001110", "00001111", "00010000", "00000101", "00000111", "00000110", "00001000", "00001011", "00001100", "00010100", "00010101", "00010010", "00010011"};
 
-int CYCLES[21]; // Será preenchido depois 
+int CYCLES[] = {1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1}; // Será alterado depois
 
 int main (int argc, char *argv[]){
     FILE *input;
@@ -40,16 +40,19 @@ int main (int argc, char *argv[]){
     /*
     * Lê quantos ciclos cada instrução leva
     */
+   printf("-> Lendo quantos ciclos cada instrução leva...\n");
     char clock_opcode[MAX_TEXT_LENGTH], *opcode_buffer;
     int clock_opcode_counter, clocks, clock_counter= 0; 0; 0;
     int isnumeric_opcode = 0;
     do{
         fgets(clock_opcode, MAX_TEXT_LENGTH, input);
         opcode_buffer = strtok(clock_opcode, ": "); //Pega o opcode, parte textual de opcode: ciclos
+        printf("clock_opcode: %s\topcode_buffer: %s\n", clock_opcode, opcode_buffer);
         removerNewLine(opcode_buffer);
 
         isnumeric_opcode = isNumeric(opcode_buffer);
         char *clocks_string = strtok(NULL, " "); //Pega o numero que representa o clock
+        printf("clocks_string: %s\n", clocks_string);
         if(!isnumeric_opcode){
             if(clocks_string == NULL){
                 break;
@@ -66,7 +69,7 @@ int main (int argc, char *argv[]){
 
     for(int i=0; i<21; i++){
         printf("%d ", CYCLES[i]);
-    }
+    } printf("\n");
     /*
     * Armazena dados em memória
     */
@@ -191,9 +194,12 @@ int main (int argc, char *argv[]){
             // Busca quantos ciclos a instrução que está no BO leva, e armazena em exCycles
             int64_t bo_instrucao = pip.BO;
             char *bo_string_binario = intParaStringBinario(bo_instrucao);
+            printf("\t%s\n", bo_string_binario);
             char *opcode_binario = buscaOpcodeDoBinario(bo_string_binario);
+            printf("\t%s\n", opcode_binario);
             int index_opcode = buscaOpcodeIndex(opcode_binario, BINARY);
-                // retorna o indice do opcode no array de binários definido no inicio do arquivo
+            printf("\t%d\n", index_opcode);
+            // retorna o indice do opcode no array de binários definido no inicio do arquivo
 
             exCycles = 0;
             if(index_opcode != -1){
