@@ -292,13 +292,28 @@ int string_length(const char *str) {
     return length;
 }
 
-void write_output(IAS *ias, FILE *output, int64_t words[]){
+void write_output(IAS *ias, FILE *output){
 
     int i = 0;
+    int64_t word;
     while (ias->memory[i] != 0) {
-        fprintf(output, "%" PRId64 "\n", ias->memory[i]);
+        word = ias->memory[i] & (((int64_t) 1 << 39) - 1);
+
+        if (isIasNegative(ias->memory[i])) {
+            fprintf(output, "-%" PRId64 "\n", word);
+        } else {
+            fprintf(output, "%" PRId64 "\n", word);
+        }
+
+        
         i++;
     }
+}
+
+int isIasNegative (int64_t num) {
+    // Desloca o bit desejado para a direita e verifica se é 1 ou 0
+    int bit40 = (num >> 39) & 1;
+    return bit40;
 }
 
 int isNumeric(const char *str) {

@@ -179,7 +179,7 @@ int main (int argc, char *argv[]){
         printf("-\t%" PRId64 "\t-\n", ias.memory[i]);
     }
 
-    write_output(&ias, midput, words);
+    write_output(&ias, midput);
     /* * * * * * * * * * * * * * * * *
     *         HORA DE SIMULAR!       *
      * * * * * * * * * * * * * * * * */
@@ -238,7 +238,7 @@ int main (int argc, char *argv[]){
         totalCycles++;
     }
 
-    write_output(&ias, output, words);
+    write_output(&ias, output);
 
     // Finaliza
     fclose(input);
