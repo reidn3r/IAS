@@ -16,6 +16,7 @@ char *OP_ARRAY[] = {"LOAD MQ", "LOAD MQ,M()", "STOR M()", "LOAD M()", "LOAD -M()
 
 char *BINARY[] = {"00001010", "00001001", "00100001", "00000001", "00000010", "00000011", "00000100", "00001101", "00001110", "00001111", "00010000", "00000101", "00000111", "00000110", "00001000", "00001011", "00001100", "00010100", "00010101", "00010010", "00010011"};
 
+
 int CYCLES[] = {1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1}; // Será alterado depois
 
 int main (int argc, char *argv[]){
@@ -42,9 +43,10 @@ int main (int argc, char *argv[]){
     /*
     * Lê quantos ciclos cada instrução leva
     */
-   printf("-> Lendo quantos ciclos cada instrucao leva...\n");
+    printf("-> Lendo quantos ciclos cada instrucao leva...\n");
     char clock_opcode[MAX_TEXT_LENGTH], *opcode_buffer;
     int clock_opcode_counter, clocks, clock_counter= 0; 0; 0;
+    char *clocks_string;
     int isnumeric_opcode = 0;
     do{
         fgets(clock_opcode, MAX_TEXT_LENGTH, input);
@@ -53,7 +55,7 @@ int main (int argc, char *argv[]){
         removerNewLine(opcode_buffer);
 
         isnumeric_opcode = isNumeric(opcode_buffer);
-        char *clocks_string = strtok(NULL, " "); //Pega o numero que representa o clock
+        clocks_string = strtok(NULL, " "); //Pega o numero que representa o clock
         printf("clocks_string: %s\n", clocks_string);
         if(!isnumeric_opcode){
             if(clocks_string == NULL){
@@ -80,7 +82,8 @@ int main (int argc, char *argv[]){
     char buffer[MAX_TEXT_LENGTH];
 
     int memorylimit = 0;
-    fgets (buffer, MAX_TEXT_LENGTH, input);
+    // fgets (buffer, MAX_TEXT_LENGTH, input);
+    strcpy(buffer, clock_opcode);
 
     while (isdigit(*buffer)) { // Lê até encontrar algo que não é número
         ias.memory[memorylimit] = strtoll(buffer, NULL, 10);
@@ -239,6 +242,11 @@ int main (int argc, char *argv[]){
     }
 
     write_output(&ias, output);
+
+
+    for(int i=0; i<15; i++){
+        printf("memo idx: %d: %d\n", i, ias.memory[i]);
+    }
 
     // Finaliza
     fclose(input);

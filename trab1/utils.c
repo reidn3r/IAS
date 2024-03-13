@@ -294,9 +294,10 @@ int string_length(const char *str) {
 
 void write_output(IAS *ias, FILE *output){
 
-    int i = 0;
+    // int i = 0;
     int64_t word;
-    while (ias->memory[i] != 0) {
+    // while (ias->memory[i] != 0) {
+    for(int i=0; i<4096; i++){
         word = ias->memory[i] & (((int64_t) 1 << 39) - 1);
 
         if (isIasNegative(ias->memory[i])) {
@@ -306,7 +307,7 @@ void write_output(IAS *ias, FILE *output){
         }
 
         
-        i++;
+        // i++;
     }
 }
 
