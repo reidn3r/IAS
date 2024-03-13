@@ -96,11 +96,11 @@ int executar (IAS *ias, PIPELINE *pip, int *cycles) {
         // -> Unconditional branch
         case 0b00001101: // JUMP M(X,0:19) Take next instruction from left half of M(X)
             clearPipeline(pip);
-            ias->PC = X;
+            ias->PC = X * 2;
             break;
         case 0b00001110: // JUMP M(X,20:39) Take next instruction from right half of M(X)
             clearPipeline(pip);
-            ias->PC = X + 1;
+            ias->PC = (X * 2) + 1;
             break;
 
         // -> Conditional branch
