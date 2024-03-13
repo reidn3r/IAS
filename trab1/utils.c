@@ -8,16 +8,19 @@ int FileIsNull(FILE *input){
     return (input == NULL) ? 1 : 0;
 }
 
-int64_t extrairInstrucao (int64_t *memory, int64_t PC) {
-    // TODO verificar se chegou no final da memoria e retornar 0
+int64_t extrairInstrucao (IAS *ias) {
+    // retornar instrução com base no PC
+    
+    int64_t word = ias->memory[ias->PC / 2];
+    printf("KKKKKKKKKKKKKKKKK %" PRId64 "\n", ias->PC);
 
-    int64_t word = memory[PC / 2];
-
-    if (PC % 2 == 0) {
-        return word >> 20;
+    if (ias->PC % 2 == 0) {
+        printf("KKKKKKKKKKKKKKKKK %" PRId64 "\n",  word >> 20);
+        return word >> 20; // instrução da esquerda
 
     } else {
-        return word & ((1 << 20) -1);
+        printf("KKKKKKKKKKKKKKKKK %" PRId64 "\n", word & ((1 << 20) -1));
+        return word & ((1 << 20) -1); // instrução da direita
     }
 }
 
@@ -107,13 +110,13 @@ int executar (IAS *ias, PIPELINE *pip, int *cycles) {
         case 0b00001111: // JUMP + M ( X , 0 : 19) If number in the accumulator is nonnegative, take next instruction from left half of M(X)
         if (!(ias->AC & ((int64_t) 1 << 40))) {
             clearPipeline(pip);
-            ias->PC = X;
+            ias->PC = X * 2;
         }
             break;
         case 0b00010000: // JUMP + M ( X , 20 : 39) If number in the accumulator is nonnegative, take next instruction from right half of M(X)
         if (!(ias->AC & ((int64_t) 1 << 40))) {
             clearPipeline(pip);
-            ias->PC = X + 1;
+            ias->PC = (X * 2) + 1;
         }
             break;
 
@@ -269,7 +272,7 @@ void printBinary(int64_t n) {
 
 char* opcode_index(char *op, char *op_list[], char *binary_opcode[]){
     printf("-- comparando...\n");
-    for(int i=0; i<21; i++){
+    for(int i=0; i<22; i++){
         printf("- %s, %s\n", op_list[i], op);
 
         if(strncmp(op_list[i], op, string_length(op)) == 0){

@@ -12,12 +12,12 @@
 #define DATA_SIZE 500
 #define PROGRAM_ADDR_START 500
 
-char *OP_ARRAY[] = {"LOAD MQ", "LOAD MQ,M()", "STOR M()", "LOAD M()", "LOAD -M()", "LOAD |M()|", "LOAD -|M()|", "JUMP M(,0:19)", "JUMP M(,20:39)", "JUMP+ M(,0:19)","JUMP+ M(,20:39)", "ADD M()", "ADD |M()|", "SUB M()", "SUB |M()|", "MUL M()", "DIV M()", "LSH", "RSH", "STOR M(,8:19)", "STOR M(,28:39)"};
+char *OP_ARRAY[] = {"LOAD MQ", "LOAD MQ,M()", "STOR M()", "LOAD M()", "LOAD -M()", "LOAD |M()|", "LOAD -|M()|", "JUMP M(,0:19)", "JUMP M(,20:39)", "JUMP+ M(,0:19)","JUMP+ M(,20:39)", "ADD M()", "ADD |M()|", "SUB M()", "SUB |M()|", "MUL M()", "DIV M()", "LSH", "RSH", "STOR M(,8:19)", "STOR M(,28:39)", "EXIT"};
 
-char *BINARY[] = {"00001010", "00001001", "00100001", "00000001", "00000010", "00000011", "00000100", "00001101", "00001110", "00001111", "00010000", "00000101", "00000111", "00000110", "00001000", "00001011", "00001100", "00010100", "00010101", "00010010", "00010011"};
+char *BINARY[] = {"00001010", "00001001", "00100001", "00000001", "00000010", "00000011", "00000100", "00001101", "00001110", "00001111", "00010000", "00000101", "00000111", "00000110", "00001000", "00001011", "00001100", "00010100", "00010101", "00010010", "00010011", "10000000"};
 
 
-int CYCLES[] = {1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1}; // Será alterado depois
+int CYCLES[] = {1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1, 1}; // Será alterado depois
 
 int main (int argc, char *argv[]){
     FILE *input;
@@ -31,6 +31,7 @@ int main (int argc, char *argv[]){
         input = fopen(argv[2], "r");
         midput = fopen("memo.ias", "w");
         output = fopen(strcat(argv[2],".out"), "w");
+        ias.PC = atoi(argv[4]); // PC onde começam as instruções = argumento da linha de comando
     } else {
         fprintf(stderr, "Argumentos incorretos!\n");
         fprintf(stderr, "Modo de uso:\n");
@@ -91,7 +92,6 @@ int main (int argc, char *argv[]){
         fgets (buffer, MAX_TEXT_LENGTH, input);
     }
     ias.instructionsStart = memorylimit;
-    ias.PC = (memorylimit * 2) + atoi(argv[4]); // PC onde começam as instruções + argumento da linha de comando
     
     /*
     * Armazena instruções em memória
@@ -217,10 +217,10 @@ int main (int argc, char *argv[]){
         decodificar(&ias, &pip);
     
         statusBM = buscarNaMemoria(&ias, &pip);
-        if (ias.PC > (memorylimit * 2)) { // Acabaram as intruções
+        if (ias.memory[ias.PC] == 0b10000000) { // Acabaram as intruções
             pip.BM = 0;
         } else if (pip.BM == 0) { // Não acabou e temos mais instruções
-            ias.IR = extrairInstrucao (ias.memory, ias.PC);
+            ias.IR = extrairInstrucao (&ias);
             pip.BM = ias.IR;
             ias.PC++;
         }

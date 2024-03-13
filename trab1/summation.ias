@@ -9,7 +9,7 @@ MUL: 2
 LSH: 1
 RSH: 5
 1
-4
+5
 0
 1
 LOAD M(0)
@@ -22,3 +22,4 @@ LOAD M(0)
 ADD M(3)
 STOR M(0)
 JUMP M(4,0:19)
+EXIT
