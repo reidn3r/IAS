@@ -4,3 +4,7 @@ output.txt
 *.json
 test.c
 *.gch
+*.out
+*.out
+trab1/memo.ias
+trab1/utils.h.gch

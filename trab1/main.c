@@ -234,6 +234,7 @@ int main (int argc, char *argv[]){
         printf("EX -> %" PRId64 "\n", pip.EX);
         printf("ER -> %" PRId64 "\n", pip.ER);
         line("~", 15);
+        printf("AC -> %" PRId64 "\n", ias.AC);
         printf("PC -> %" PRId64 "\n", ias.PC);
 
         pipelineCleared = isPipelineCleared(pip);
