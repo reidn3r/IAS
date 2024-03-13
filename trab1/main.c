@@ -167,7 +167,7 @@ int main (int argc, char *argv[]){
     printf("\tPalavras\n");
     for (int i = 0; i < lineCounter/2 + 1; i++) {
         line("-", 20);
-        printf("Palavra %d: %lld\n", i+1, words[i]);
+        printf("Palavra %d: " PRId64 "\n", i+1, words[i]);
         printBinary(words[i]);
     }
 
@@ -243,7 +243,7 @@ int main (int argc, char *argv[]){
 
 
     for(int i=0; i<15; i++){
-        printf("memo idx: %d: %d\n", i, ias.memory[i]);
+        printf("memo idx: %d: " PRId64 "\n", i, ias.memory[i]);
     }
 
     // Finaliza
