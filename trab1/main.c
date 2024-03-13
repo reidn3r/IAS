@@ -199,11 +199,8 @@ int main (int argc, char *argv[]){
             // Busca quantos ciclos a instrução que está no BO leva, e armazena em exCycles
             int64_t bo_instrucao = pip.BO;
             char *bo_string_binario = intParaStringBinario(bo_instrucao);
-            printf("\t%s\n", bo_string_binario);
             char *opcode_binario = buscaOpcodeDoBinario(bo_string_binario);
-            printf("\t%s\n", opcode_binario);
             int index_opcode = buscaOpcodeIndex(opcode_binario, BINARY);
-            printf("\t%d\n", index_opcode);
             // retorna o indice do opcode no array de binários definido no inicio do arquivo
 
             exCycles = 0;

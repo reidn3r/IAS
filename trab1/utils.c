@@ -12,14 +12,11 @@ int64_t extrairInstrucao (IAS *ias) {
     // retornar instrução com base no PC
     
     int64_t word = ias->memory[ias->PC / 2];
-    printf("KKKKKKKKKKKKKKKKK %" PRId64 "\n", ias->PC);
 
     if (ias->PC % 2 == 0) {
-        printf("KKKKKKKKKKKKKKKKK %" PRId64 "\n",  word >> 20);
         return word >> 20; // instrução da esquerda
 
     } else {
-        printf("KKKKKKKKKKKKKKKKK %" PRId64 "\n", word & ((1 << 20) -1));
         return word & ((1 << 20) -1); // instrução da direita
     }
 }
