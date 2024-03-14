@@ -238,18 +238,19 @@ unsigned int strToBin(const char *strBinario) {
 
 void line (char *symbols, int length) {
     // faz uma linha de tamanho 'length' com os caracteres de 'symbols'
+    return;
 
     int x = strlen(symbols);
 
     for (int i = 0; i < length/x; i++) {
-        printf("%s", symbols);
+        // printf("%s", symbols);
     }
-    printf("\n");
+    // printf("\n");
 }
 
 void printBinary(int64_t n) {
     if (n == 0) {
-        printf("0");
+        // printf("0");
         return;
     }
 
@@ -262,18 +263,18 @@ void printBinary(int64_t n) {
     }
 
     for (int j = i - 1; j >= 0; j--) {
-        if (! bits[j]) printf("0"); else printf("1");
+        if (! bits[j]); // printf("0"); else // printf("1");
     }
-    printf("\n");
+    // printf("\n");
 }
 
 char* opcode_index(char *op, char *op_list[], char *binary_opcode[]){
-    printf("-- comparando...\n");
+    // printf("-- comparando...\n");
     for(int i=0; i<22; i++){
-        printf("- %s, %s -\n", op_list[i], op);
+        // printf("- %s, %s -\n", op_list[i], op);
 
         if(strncmp(op_list[i], op, string_length(op)) == 0){
-            printf("-- achei!\n");
+            // printf("-- achei!\n");
             return binary_opcode[i];
         }
     }
@@ -352,7 +353,7 @@ char* intParaStringBinario(int num) {
     // Aloca espaço para a string (20 bits + 1 para o caractere nulo)
     char *binaryString = (char *)malloc(21 * sizeof(char));
     if (binaryString == NULL) {
-        printf("Erro de alocação de memória\n");
+        // printf("Erro de alocação de memória\n");
         exit(1);
     }
     

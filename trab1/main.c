@@ -40,7 +40,7 @@ int main (int argc, char *argv[]){
         ias.PC = atoi(argv[4]); // PC onde começam as instruções = argumento da linha de comando
 
         for (int i = 0; i < 5; i++) {
-            printf("-> argv[%d]: %s\t-atoi> %d\n", i, argv[i], atoi(argv[i]));
+            // printf("-> argv[%d]: %s\t-atoi> %d\n", i, argv[i], atoi(argv[i]));
         }
     } else {
         fprintf(stderr, "Argumentos incorretos!\n");
@@ -54,7 +54,7 @@ int main (int argc, char *argv[]){
     /*
     * Lê quantos ciclos cada instrução leva
     */
-    printf("-> Lendo quantos ciclos cada instrucao leva...\n");
+    // printf("-> Lendo quantos ciclos cada instrucao leva...\n");
     char clock_opcode[MAX_TEXT_LENGTH], *opcode_buffer;
     int clocks = 0, clock_counter = 0;
     char *clocks_string;
@@ -62,12 +62,12 @@ int main (int argc, char *argv[]){
     do{
         fgets(clock_opcode, MAX_TEXT_LENGTH, input);
         opcode_buffer = strtok(clock_opcode, ": "); //Pega o opcode, parte textual de opcode: ciclos
-        printf("clock_opcode: %s\topcode_buffer: %s\n", clock_opcode, opcode_buffer);
+        // printf("clock_opcode: %s\topcode_buffer: %s\n", clock_opcode, opcode_buffer);
         removerNewLine(opcode_buffer);
 
         isnumeric_opcode = isNumeric(opcode_buffer);
         clocks_string = strtok(NULL, " "); //Pega o numero que representa o clock
-        printf("clocks_string: %s\n", clocks_string);
+        // printf("clocks_string: %s\n", clocks_string);
         if(!isnumeric_opcode){
             if(clocks_string == NULL){
                 break;
@@ -83,8 +83,8 @@ int main (int argc, char *argv[]){
     }while(!isnumeric_opcode);
 
     for(int i=0; i<21; i++){
-        printf("%d ", CYCLES[i]);
-    } printf("\n");
+        // printf("%d ", CYCLES[i]);
+    } // printf("\n");
     /*
     * Armazena dados em memória
     */
@@ -118,30 +118,30 @@ int main (int argc, char *argv[]){
         instructionInt = 0;
 
         line("-", 30);
-        printf("-=-=-=-=-=Linha %d=-=-=-=-=-\n", lineCounter+1);
+        // printf("-=-=-=-=-=Linha %d=-=-=-=-=-\n", lineCounter+1);
 
         // Remove \n
         removerNewLine(buffer);
-        printf("buffer:\t\t%s\n", buffer);
+        // printf("buffer:\t\t%s\n", buffer);
 
         // Separa intrucao de endereco de memoria
         strcpy(instructionText, buffer);
         address = removerX(instructionText);
         binary_opcode = opcode_index(instructionText, OP_ARRAY, BINARY);
-        printf("opcode[txt]:\t%s\n", instructionText);
-        printf("endereco:\t%d\n", address);
+        // printf("opcode[txt]:\t%s\n", instructionText);
+        // printf("endereco:\t%d\n", address);
 
         // Adiciona opcode binario na instrucao
         instructionInt = instructionInt | strToBin(binary_opcode);
-        printf("binary_opcode: %s\n", binary_opcode);
-        printf("strToBin: %d\n", strToBin(binary_opcode));
-        printf("opcode[bin]:\t");
+        // printf("binary_opcode: %s\n", binary_opcode);
+        // printf("strToBin: %d\n", strToBin(binary_opcode));
+        // printf("opcode[bin]:\t");
         printBinary(instructionInt);
 
         // Adiciona endereco binario na instrucao
         instructionInt = instructionInt << 12;
         instructionInt = instructionInt | address;
-        printf("instrucao:\t");
+        // printf("instrucao:\t");
         printBinary(instructionInt);
 
         // Salva em vetor de instrucoes
@@ -152,10 +152,10 @@ int main (int argc, char *argv[]){
 
     // Enumera as instrucoes compiladas e constroi as 'words' do IAS juntando duas instrucoes
     line("~", 30);
-    printf("\tInstrucoes\n");
+    // printf("\tInstrucoes\n");
     int64_t words[256];
     for (int i = 0; i < lineCounter; i++) {
-        printf("Instrucao %d:\t%d\n", i+1, instructionsInt[i]);
+        // printf("Instrucao %d:\t%d\n", i+1, instructionsInt[i]);
         printBinary(instructionsInt[i]);
 
         if (i % 2 == 0) {
@@ -172,22 +172,22 @@ int main (int argc, char *argv[]){
     }
 
     line("~", 30);
-    printf("\tPalavras\n");
+    // printf("\tPalavras\n");
     for (int i = 0; i < lineCounter/2 + 1; i++) {
         line("-", 20);
-        printf("Palavra %d: %" PRId64 "\n", i+1, words[i]);
+        // printf("Palavra %d: %" PRId64 "\n", i+1, words[i]);
         printBinary(words[i]);
     }
 
     int size = sizeof(words)/sizeof(long long);
-    printf("SIZE: %d\n", size);
+    // printf("SIZE: %d\n", size);
     // write_output(ias, output, words, size);
 
     // Mostra o que está na memória
     line("~", 30);
-    printf("      Memória compilada\n");
+    // printf("      Memória compilada\n");
     for (int i = 0; i < memorylimit; i++) {
-        printf("-\t%" PRId64 "\t-\n", ias.memory[i]);
+        // printf("-\t%" PRId64 "\t-\n", ias.memory[i]);
     }
 
     write_output(&ias, midput);
@@ -215,7 +215,7 @@ int main (int argc, char *argv[]){
             if(index_opcode != -1){
                 exCycles = CYCLES[index_opcode];
             }
-            printf("ciclos da instrucao: %d\n", exCycles);
+            // printf("ciclos da instrucao: %d\n", exCycles);
         }
 
         buscarOperandos(&ias, &pip);
@@ -231,16 +231,16 @@ int main (int argc, char *argv[]){
         }
 
         line("-=", 20);
-        printf("cycle: %d\n", totalCycles);
+        // printf("cycle: %d\n", totalCycles);
         line("~", 15);
-        printf("BM -> %" PRId64 "\n", pip.BM);
-        printf("DC -> %" PRId64 "\n", pip.DC);
-        printf("BO -> %" PRId64 "\n", pip.BO);
-        printf("EX -> %" PRId64 "\n", pip.EX);
-        printf("ER -> %" PRId64 "\n", pip.ER);
+        // printf("BM -> %" PRId64 "\n", pip.BM);
+        // printf("DC -> %" PRId64 "\n", pip.DC);
+        // printf("BO -> %" PRId64 "\n", pip.BO);
+        // printf("EX -> %" PRId64 "\n", pip.EX);
+        // printf("ER -> %" PRId64 "\n", pip.ER);
         line("~", 15);
-        printf("AC -> %" PRId64 "\n", ias.AC);
-        printf("PC -> %" PRId64 "\n", ias.PC);
+        // printf("AC -> %" PRId64 "\n", ias.AC);
+        // printf("PC -> %" PRId64 "\n", ias.PC);
 
         pipelineCleared = isPipelineCleared(pip);
         if (firstTime) firstTime = 0;
@@ -251,7 +251,7 @@ int main (int argc, char *argv[]){
 
 
     for(int i=0; i<15; i++){
-        printf("memo idx: %d: %" PRId64 "\n", i, ias.memory[i]);
+        // printf("memo idx: %d: %" PRId64 "\n", i, ias.memory[i]);
     }
 
     // Finaliza
