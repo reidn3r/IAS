@@ -25,13 +25,23 @@ int main (int argc, char *argv[]){
     FILE *output;
     IAS ias;
     PIPELINE pip;
+
+    fflush(stdin);
+    fflush(stdout);
     
     // Verifica se o programa foi chamado corretamente
     if (argc == 5 && strcmp(argv[1], "-p") == 0 && strcmp(argv[3], "-i") == 0) {
+        char outputFileName[MAX_TEXT_LENGTH];
+        strcpy(outputFileName, argv[2]);
+
         input = fopen(argv[2], "r");
         midput = fopen("memo.ias", "w");
-        output = fopen(strcat(argv[2],".out"), "w");
+        output = fopen(strcat(outputFileName,".out"), "w");
         ias.PC = atoi(argv[4]); // PC onde começam as instruções = argumento da linha de comando
+
+        for (int i = 0; i < 5; i++) {
+            printf("-> argv[%d]: %s\t-atoi> %d\n", i, argv[i], atoi(argv[i]));
+        }
     } else {
         fprintf(stderr, "Argumentos incorretos!\n");
         fprintf(stderr, "Modo de uso:\n");
@@ -46,7 +56,7 @@ int main (int argc, char *argv[]){
     */
     printf("-> Lendo quantos ciclos cada instrucao leva...\n");
     char clock_opcode[MAX_TEXT_LENGTH], *opcode_buffer;
-    int clock_opcode_counter, clocks, clock_counter= 0; 0; 0;
+    int clocks = 0, clock_counter = 0;
     char *clocks_string;
     int isnumeric_opcode = 0;
     do{
@@ -79,7 +89,6 @@ int main (int argc, char *argv[]){
     * Armazena dados em memória
     */
 
-    int data;
     char buffer[MAX_TEXT_LENGTH];
 
     int memorylimit = 0;
@@ -98,7 +107,6 @@ int main (int argc, char *argv[]){
     */
 
     char instructionText[MAX_TEXT_LENGTH];
-    char *argument;
     int lineCounter = 0;
     int address = -1;
 
@@ -188,7 +196,7 @@ int main (int argc, char *argv[]){
      * * * * * * * * * * * * * * * * */
 
     pip.BM = 0, pip.BO = 0, pip.DC = 0, pip.ER = 0, pip.EX = 0;
-    int statusER = 0, statusEX = 0, statusBO = 0, statusDC = 0, statusBM = 0; // 1, se esse passo do pipeline conseguiu executar
+    int statusEX = 0, statusBM = 0; // 1, se esse passo do pipeline conseguiu executar
     int totalCycles = 1, exCycles = 1;
     int pipelineCleared = 0, firstTime = 1;
     while (!pipelineCleared) { // Se o pip está limpo, finaliza

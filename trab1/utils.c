@@ -132,7 +132,7 @@ int executar (IAS *ias, PIPELINE *pip, int *cycles) {
             break;
         case 0b00001011: // MUL M(X) Multiply M(X) by MQ; put most significant bits of result in AC, put least significant bits in MQ
             multiply_result = ias->MQ * ias->memory[X];
-            ias -> AC = multiply_result >> (64/2);
+            ias -> AC = multiply_result;
             ias -> MQ = multiply_result << (64/2);
             break;
         case 0b00001100: // DIV M(X) Divide AC by M(X); put the quotient in MQ and the remainder in AC
@@ -270,7 +270,7 @@ void printBinary(int64_t n) {
 char* opcode_index(char *op, char *op_list[], char *binary_opcode[]){
     printf("-- comparando...\n");
     for(int i=0; i<22; i++){
-        printf("- %s, %s\n", op_list[i], op);
+        printf("- %s, %s -\n", op_list[i], op);
 
         if(strncmp(op_list[i], op, string_length(op)) == 0){
             printf("-- achei!\n");

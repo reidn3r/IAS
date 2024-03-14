@@ -8,3 +8,6 @@ test.c
 *.out
 trab1/memo.ias
 trab1/utils.h.gch
+*.gch
+trab1/memo.ias
+*.out
