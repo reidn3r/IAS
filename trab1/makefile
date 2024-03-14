@@ -11,5 +11,8 @@ fibonacci: ias.out
 fatorial: ias.out
 	./ias.out -p fatorial.ias -i 6
 
+instructions: ias.out
+	./ias.out -p instructions.ias -i 10
+
 ias.out:
 	gcc main.c utils.c utils.h -o ias.out
